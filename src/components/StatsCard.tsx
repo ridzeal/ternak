@@ -20,34 +20,18 @@ export function StatsCard({ icon, label, value, sub, warn }: StatsCardProps) {
       }}
     >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span style={{ fontSize: 24 }}>{icon}</span>
+        <span className="stats-icon">{icon}</span>
         <div style={{ textAlign: 'right' }}>
           <div
-            style={{
-              fontFamily: 'monospace',
-              fontWeight: 'bold',
-              fontSize: 22,
-              color: warn ? '#c0392b' : '#2e2416',
-            }}
+            className="stats-value"
+            style={{ color: warn ? '#c0392b' : '#2e2416' }}
           >
             {value}
           </div>
-          <div
-            style={{
-              fontFamily: 'monospace',
-              fontSize: 9,
-              color: '#8a7d6b',
-              letterSpacing: '0.08em',
-              textTransform: 'uppercase',
-            }}
-          >
-            {label}
-          </div>
+          <div className="stats-label">{label}</div>
         </div>
       </div>
-      <div style={{ fontFamily: 'monospace', fontSize: 10, color: '#b0a090', marginTop: 8 }}>
-        {sub}
-      </div>
+      <div className="stats-sub">{sub}</div>
     </div>
   );
 }

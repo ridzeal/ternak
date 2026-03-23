@@ -10,8 +10,6 @@ const baseStyle = {
   border: 'none',
   borderRadius: 100,
   fontFamily: 'monospace',
-  fontSize: 11,
-  cursor: 'pointer',
   letterSpacing: '0.06em',
   transition: 'all 0.2s',
 };
@@ -23,9 +21,9 @@ const variants = {
 };
 
 const sizes = {
-  sm: { padding: '6px 14px', fontSize: 10 },
-  md: { padding: '10px 20px', fontSize: 11 },
-  lg: { padding: '12px 24px', fontSize: 12 },
+  sm: { padding: '10px 22px' },
+  md: { padding: '18px 32px' },
+  lg: { padding: '20px 38px' },
 };
 
 export function Button({ variant = 'primary', size = 'md', children, style, ...props }: ButtonProps) {

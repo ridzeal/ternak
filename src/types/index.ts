@@ -1,13 +1,13 @@
-export type CowStatus = 'Lactating' | 'Dry' | 'Pregnant' | 'Active' | 'Quarantine' | 'Sold';
-export type MilkingSession = 'Morning' | 'Afternoon' | 'Evening';
-export type EventType = 'Health Check' | 'Breeding' | 'Weighing' | 'Vaccination' | 'Treatment' | 'Calving' | 'Deworming' | 'Hoof Trim';
+export type CowStatus = 'Laktasi' | 'Kering' | 'Hamil' | 'Aktif' | 'Karantina' | 'Terjual';
+export type MilkingSession = 'Pagi' | 'Siang' | 'Malam';
+export type EventType = 'Pemeriksaan Kesehatan' | 'Pengawinan' | 'Penimbangan' | 'Vaksinasi' | 'Pengobatan' | 'Melahirkan' | 'Pemberian Cacing' | 'Pemotongan Kuku';
 
 export interface Cow {
   id: string;
   name: string;
   breed: string;
   dob: string;
-  gender: 'Female' | 'Male';
+  gender: 'Betina' | 'Jantan';
   weight: number;
   status: CowStatus;
   tag: string;
@@ -60,6 +60,6 @@ export interface FarmContextType extends FarmState {
 
 // Constants
 export const BREEDS = ['Friesian Holstein', 'Limousin', 'Simmental', 'Brahman', 'Ongole', 'Madura', 'Bali'];
-export const STATUSES = ['Lactating', 'Dry', 'Pregnant', 'Active', 'Quarantine', 'Sold'] as const;
-export const SESSIONS = ['Morning', 'Afternoon', 'Evening'] as const;
-export const ETYPES = ['Health Check', 'Breeding', 'Weighing', 'Vaccination', 'Treatment', 'Calving', 'Deworming', 'Hoof Trim'] as const;
+export const STATUSES = ['Laktasi', 'Kering', 'Hamil', 'Aktif', 'Karantina', 'Terjual'] as const;
+export const SESSIONS = ['Pagi', 'Siang', 'Malam'] as const;
+export const ETYPES = ['Pemeriksaan Kesehatan', 'Pengawinan', 'Penimbangan', 'Vaksinasi', 'Pengobatan', 'Melahirkan', 'Pemberian Cacing', 'Pemotongan Kuku'] as const;

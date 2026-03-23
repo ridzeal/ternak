@@ -14,7 +14,7 @@ import { BREEDS, STATUSES, SESSIONS, ETYPES, Cow, MilkingRecord, FarmEvent } fro
 interface CowFormData {
   name: string;
   breed: string;
-  gender: 'Female' | 'Male';
+  gender: 'Betina' | 'Jantan';
   dob: string;
   weight: string;
   status: string;
@@ -43,9 +43,9 @@ interface EventFormData {
 }
 
 const TABS = [
-  { key: 'cows', label: '🐄 Herd', count: 0 },
-  { key: 'milking', label: '🥛 Milking', count: 0 },
-  { key: 'events', label: '📋 Events', count: 0 },
+  { key: 'cows', label: '🐄 Ternak', count: 0 },
+  { key: 'milking', label: '🥛 Pemerahan', count: 0 },
+  { key: 'events', label: '📋 Kegiatan', count: 0 },
 ];
 
 export default function HomePage() {
@@ -59,7 +59,7 @@ export default function HomePage() {
   const [cowForm, setCowForm] = useState<CowFormData>({
     name: '',
     breed: BREEDS[0],
-    gender: 'Female',
+    gender: 'Betina',
     dob: '',
     weight: '',
     status: STATUSES[0],
@@ -93,7 +93,7 @@ export default function HomePage() {
 
   const handleAddCow = () => {
     if (!cowForm.name || !cowForm.tag || !cowForm.dob) {
-      flash('⚠ Name, tag and DOB required');
+      flash('⚠ Nama, nomor telinga, dan tanggal lahir harus diisi');
       return;
     }
     addCow({
@@ -104,7 +104,7 @@ export default function HomePage() {
     setCowForm({
       name: '',
       breed: BREEDS[0],
-      gender: 'Female',
+      gender: 'Betina',
       dob: '',
       weight: '',
       status: STATUSES[0],
@@ -113,12 +113,12 @@ export default function HomePage() {
       dam: '',
     });
     setModalOpen(null);
-    flash('Cow registered ✓');
+    flash('Sapi berhasil didaftarkan ✓');
   };
 
   const handleAddMilking = () => {
     if (!milkingForm.cowId || !milkingForm.volume) {
-      flash('⚠ Select cow and enter volume');
+      flash('⚠ Pilih sapi dan masukkan volume susu');
       return;
     }
     const cow = cows.find((c) => c.id === milkingForm.cowId);
@@ -140,12 +140,12 @@ export default function HomePage() {
       notes: '',
     });
     setModalOpen(null);
-    flash('Milking session saved ✓');
+    flash('Data pemerahan berhasil disimpan ✓');
   };
 
   const handleAddEvent = () => {
     if (!eventForm.cowId || !eventForm.description) {
-      flash('⚠ Select cow and add description');
+      flash('⚠ Pilih sapi dan tambahkan deskripsi');
       return;
     }
     const cow = cows.find((c) => c.id === eventForm.cowId);
@@ -163,7 +163,7 @@ export default function HomePage() {
       followUp: '',
     });
     setModalOpen(null);
-    flash('Event logged ✓');
+    flash('Kegiatan berhasil dicatat ✓');
   };
 
   const tabsWithCount = TABS.map((tab) => ({
@@ -171,7 +171,7 @@ export default function HomePage() {
     count: tab.key === 'cows' ? cows.length : tab.key === 'milking' ? milking.length : events.length,
   }));
 
-  const femaleCows = cows.filter((c) => c.gender === 'Female');
+  const femaleCows = cows.filter((c) => c.gender === 'Betina');
 
   return (
     <div style={{ minHeight: '100vh' }}>
@@ -189,8 +189,8 @@ export default function HomePage() {
       <Modal
         isOpen={modalOpen === 'cow'}
         onClose={() => setModalOpen(null)}
-        title="🐄 Register New Cow"
-        subtitle="Add animal to herd registry"
+        title="🐄 Daftarkan Sapi Baru"
+        subtitle="Tambahkan hewan ke registri ternak"
       >
         <AddCowForm
           formData={cowForm}
@@ -204,8 +204,8 @@ export default function HomePage() {
       <Modal
         isOpen={modalOpen === 'milk'}
         onClose={() => setModalOpen(null)}
-        title="🥛 Log Milking Session"
-        subtitle="Record production data"
+        title="🥛 Catat Session Pemerahan"
+        subtitle="Rekam data produksi susu"
       >
         <AddMilkingForm
           formData={milkingForm}
@@ -220,8 +220,8 @@ export default function HomePage() {
       <Modal
         isOpen={modalOpen === 'event'}
         onClose={() => setModalOpen(null)}
-        title="📋 Log Farm Event"
-        subtitle="Record health or farm event"
+        title="📋 Catat Kegiatan Peternakan"
+        subtitle="Rekam kegiatan kesehatan atau peternakan"
       >
         <AddEventForm
           formData={eventForm}

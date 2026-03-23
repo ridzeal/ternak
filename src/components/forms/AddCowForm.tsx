@@ -9,7 +9,7 @@ interface CowFormData {
   name: string;
   tag: string;
   breed: string;
-  gender: 'Female' | 'Male';
+  gender: 'Betina' | 'Jantan';
   dob: string;
   weight: string;
   status: string;
@@ -31,12 +31,12 @@ export function AddCowForm({ formData, onChange, onSubmit, onCancel }: AddCowFor
 
   const inputStyle = {
     width: '100%',
-    padding: '9px 12px',
+    padding: '12px 14px',
     borderRadius: 8,
     border: '1.5px solid #d6cbba',
     background: '#faf7f2',
     fontFamily: 'monospace',
-    fontSize: 13,
+    fontSize: 16,
     color: '#3a2e20',
     outline: 'none',
     boxSizing: 'border-box',
@@ -50,23 +50,23 @@ export function AddCowForm({ formData, onChange, onSubmit, onCancel }: AddCowFor
 
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
-      <Field label="Name *">
+      <Field label="Nama *">
         <input
           style={inputStyle}
           value={formData.name}
           onChange={e => updateField('name', e.target.value)}
-          placeholder="e.g. Mentari"
+          placeholder="mis. Mentari"
         />
       </Field>
-      <Field label="Ear Tag *">
+      <Field label="Nomor Ears Tag *">
         <input
           style={inputStyle}
           value={formData.tag}
           onChange={e => updateField('tag', e.target.value)}
-          placeholder="e.g. FH-4821"
+          placeholder="mis. FH-4821"
         />
       </Field>
-      <Field label="Breed">
+      <Field label="Jenis">
         <select
           style={selectStyle}
           value={formData.breed}
@@ -75,17 +75,17 @@ export function AddCowForm({ formData, onChange, onSubmit, onCancel }: AddCowFor
           {BREEDS.map(b => <option key={b}>{b}</option>)}
         </select>
       </Field>
-      <Field label="Gender">
+      <Field label="Jenis Kelamin">
         <select
           style={selectStyle}
           value={formData.gender}
-          onChange={e => updateField('gender', e.target.value as 'Female' | 'Male')}
+          onChange={e => updateField('gender', e.target.value as 'Betina' | 'Jantan')}
         >
-          <option>Female</option>
-          <option>Male</option>
+          <option>Betina</option>
+          <option>Jantan</option>
         </select>
       </Field>
-      <Field label="Date of Birth *">
+      <Field label="Tanggal Lahir *">
         <input
           style={inputStyle}
           type="date"
@@ -93,13 +93,13 @@ export function AddCowForm({ formData, onChange, onSubmit, onCancel }: AddCowFor
           onChange={e => updateField('dob', e.target.value)}
         />
       </Field>
-      <Field label="Weight (kg)">
+      <Field label="Berat (kg)">
         <input
           style={inputStyle}
           type="number"
           value={formData.weight}
           onChange={e => updateField('weight', e.target.value)}
-          placeholder="e.g. 480"
+          placeholder="mis. 480"
         />
       </Field>
       <Field label="Status">
@@ -111,25 +111,25 @@ export function AddCowForm({ formData, onChange, onSubmit, onCancel }: AddCowFor
           {STATUSES.map(s => <option key={s}>{s}</option>)}
         </select>
       </Field>
-      <Field label="Sire (Father)">
+      <Field label="Sire (Ayah)">
         <input
           style={inputStyle}
           value={formData.sire}
           onChange={e => updateField('sire', e.target.value)}
-          placeholder="Bull ID or name"
+          placeholder="ID atau nama pejantan"
         />
       </Field>
-      <Field label="Dam (Mother)" col={2}>
+      <Field label="Dam (Ibu)" col={2}>
         <input
           style={inputStyle}
           value={formData.dam}
           onChange={e => updateField('dam', e.target.value)}
-          placeholder="Cow ID or name"
+          placeholder="ID atau nama sapi betina"
         />
       </Field>
       <div style={{ gridColumn: 'span 2', display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 6 }}>
-        <Button variant="secondary" onClick={onCancel}>Cancel</Button>
-        <Button onClick={onSubmit}>Register Cow</Button>
+        <Button variant="secondary" onClick={onCancel}>Batal</Button>
+        <Button onClick={onSubmit}>Daftarkan Sapi</Button>
       </div>
     </div>
   );

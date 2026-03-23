@@ -51,21 +51,17 @@ export function Modal({ isOpen, onClose, title, subtitle, children }: ModalProps
           }}
         >
           <div>
-            <h3 style={{ margin: 0, fontSize: 17, fontWeight: 'bold' }}>{title}</h3>
-            <p style={{ margin: '4px 0 0', fontFamily: 'monospace', fontSize: 10, color: '#8a7d6b' }}>
-              {subtitle}
-            </p>
+            <h3 className="modal-title">{title}</h3>
+            <p className="modal-subtitle">{subtitle}</p>
           </div>
           <button
             onClick={onClose}
+            className="modal-close"
             style={{
               background: '#f0e4d0',
               border: 'none',
-              width: 30,
-              height: 30,
               borderRadius: 8,
               cursor: 'pointer',
-              fontSize: 15,
               color: '#8a7d6b',
               display: 'flex',
               alignItems: 'center',

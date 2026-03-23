@@ -29,12 +29,12 @@ export function AddEventForm({ formData, onChange, onSubmit, onCancel, cows }: A
 
   const inputStyle: React.CSSProperties = {
     width: '100%',
-    padding: '9px 12px',
+    padding: '12px 14px',
     borderRadius: 8,
     border: '1.5px solid #d6cbba',
     background: '#faf7f2',
     fontFamily: 'monospace',
-    fontSize: 13,
+    fontSize: 16,
     color: '#3a2e20',
     outline: 'none',
     boxSizing: 'border-box',
@@ -48,63 +48,63 @@ export function AddEventForm({ formData, onChange, onSubmit, onCancel, cows }: A
 
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
-      <Field label="Select Cow *" col={2}>
-        <select 
-          style={selectStyle} 
-          value={formData.cowId} 
+      <Field label="Pilih Sapi *" col={2}>
+        <select
+          style={selectStyle}
+          value={formData.cowId}
           onChange={e => updateField('cowId', e.target.value)}
         >
-          <option value="">— choose cow —</option>
+          <option value="">— pilih sapi —</option>
           {cows.map(cow => (
             <option key={cow.id} value={cow.id}>{cow.name} ({cow.id})</option>
           ))}
         </select>
       </Field>
-      <Field label="Event Type">
-        <select 
-          style={selectStyle} 
-          value={formData.type} 
+      <Field label="Jenis Kegiatan">
+        <select
+          style={selectStyle}
+          value={formData.type}
           onChange={e => updateField('type', e.target.value)}
         >
           {ETYPES.map(t => <option key={t}>{t}</option>)}
         </select>
       </Field>
-      <Field label="Date">
-        <input 
-          style={inputStyle} 
-          type="date" 
-          value={formData.date} 
-          onChange={e => updateField('date', e.target.value)} 
+      <Field label="Tanggal">
+        <input
+          style={inputStyle}
+          type="date"
+          value={formData.date}
+          onChange={e => updateField('date', e.target.value)}
         />
       </Field>
-      <Field label="Description *" col={2}>
-        <textarea 
-          style={{ ...inputStyle, resize: 'vertical' }} 
-          rows={3} 
-          value={formData.description} 
-          onChange={e => updateField('description', e.target.value)} 
-          placeholder="Describe the event in detail..." 
+      <Field label="Deskripsi *" col={2}>
+        <textarea
+          style={{ ...inputStyle, resize: 'vertical' }}
+          rows={3}
+          value={formData.description}
+          onChange={e => updateField('description', e.target.value)}
+          placeholder="Jelaskan kegiatan secara detail..."
         />
       </Field>
-      <Field label="Veterinarian / Officer">
-        <input 
-          style={inputStyle} 
-          value={formData.vet} 
-          onChange={e => updateField('vet', e.target.value)} 
-          placeholder="drh. Name" 
+      <Field label="Dokter Hewan / Petugas">
+        <input
+          style={inputStyle}
+          value={formData.vet}
+          onChange={e => updateField('vet', e.target.value)}
+          placeholder="drh. Nama"
         />
       </Field>
-      <Field label="Follow-up Date">
-        <input 
-          style={inputStyle} 
-          type="date" 
-          value={formData.followUp} 
-          onChange={e => updateField('followUp', e.target.value)} 
+      <Field label="Tanggal Tindak Lanjut">
+        <input
+          style={inputStyle}
+          type="date"
+          value={formData.followUp}
+          onChange={e => updateField('followUp', e.target.value)}
         />
       </Field>
       <div style={{ gridColumn: 'span 2', display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 6 }}>
-        <Button variant="secondary" onClick={onCancel}>Cancel</Button>
-        <Button onClick={onSubmit}>Log Event</Button>
+        <Button variant="secondary" onClick={onCancel}>Batal</Button>
+        <Button onClick={onSubmit}>Catat Kegiatan</Button>
       </div>
     </div>
   );

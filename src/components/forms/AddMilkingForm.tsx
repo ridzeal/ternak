@@ -30,12 +30,12 @@ export function AddMilkingForm({ formData, onChange, onSubmit, onCancel, femaleC
 
   const inputStyle: React.CSSProperties = {
     width: '100%',
-    padding: '9px 12px',
+    padding: '12px 14px',
     borderRadius: 8,
     border: '1.5px solid #d6cbba',
     background: '#faf7f2',
     fontFamily: 'monospace',
-    fontSize: 13,
+    fontSize: 16,
     color: '#3a2e20',
     outline: 'none',
     boxSizing: 'border-box',
@@ -49,74 +49,74 @@ export function AddMilkingForm({ formData, onChange, onSubmit, onCancel, femaleC
 
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
-      <Field label="Select Cow *" col={2}>
-        <select 
-          style={selectStyle} 
-          value={formData.cowId} 
+      <Field label="Pilih Sapi *" col={2}>
+        <select
+          style={selectStyle}
+          value={formData.cowId}
           onChange={e => updateField('cowId', e.target.value)}
         >
-          <option value="">— choose cow —</option>
+          <option value="">— pilih sapi —</option>
           {femaleCows.map(cow => (
             <option key={cow.id} value={cow.id}>{cow.name} ({cow.id})</option>
           ))}
         </select>
       </Field>
-      <Field label="Date">
-        <input 
-          style={inputStyle} 
-          type="date" 
-          value={formData.date} 
-          onChange={e => updateField('date', e.target.value)} 
+      <Field label="Tanggal">
+        <input
+          style={inputStyle}
+          type="date"
+          value={formData.date}
+          onChange={e => updateField('date', e.target.value)}
         />
       </Field>
-      <Field label="Session">
-        <select 
-          style={selectStyle} 
-          value={formData.session} 
+      <Field label="Sesi">
+        <select
+          style={selectStyle}
+          value={formData.session}
           onChange={e => updateField('session', e.target.value)}
         >
           {SESSIONS.map(s => <option key={s}>{s}</option>)}
         </select>
       </Field>
-      <Field label="Volume (Liters) *">
-        <input 
-          style={inputStyle} 
-          type="number" 
-          value={formData.volume} 
-          onChange={e => updateField('volume', e.target.value)} 
-          placeholder="e.g. 12.5" 
+      <Field label="Volume (Liter) *">
+        <input
+          style={inputStyle}
+          type="number"
+          value={formData.volume}
+          onChange={e => updateField('volume', e.target.value)}
+          placeholder="mis. 12.5"
         />
       </Field>
-      <Field label="Fat Content (%)">
-        <input 
-          style={inputStyle} 
-          type="number" 
-          value={formData.fat} 
-          onChange={e => updateField('fat', e.target.value)} 
-          placeholder="e.g. 3.8" 
+      <Field label="Kadar Lemak (%)">
+        <input
+          style={inputStyle}
+          type="number"
+          value={formData.fat}
+          onChange={e => updateField('fat', e.target.value)}
+          placeholder="mis. 3.8"
         />
       </Field>
       <Field label="Protein (%)" col={2}>
-        <input 
-          style={inputStyle} 
-          type="number" 
-          value={formData.protein} 
-          onChange={e => updateField('protein', e.target.value)} 
-          placeholder="e.g. 3.2" 
+        <input
+          style={inputStyle}
+          type="number"
+          value={formData.protein}
+          onChange={e => updateField('protein', e.target.value)}
+          placeholder="mis. 3.2"
         />
       </Field>
-      <Field label="Notes" col={2}>
-        <textarea 
-          style={{ ...inputStyle, resize: 'vertical' }} 
-          rows={2} 
-          value={formData.notes} 
-          onChange={e => updateField('notes', e.target.value)} 
-          placeholder="Any observations..." 
+      <Field label="Catatan" col={2}>
+        <textarea
+          style={{ ...inputStyle, resize: 'vertical' }}
+          rows={2}
+          value={formData.notes}
+          onChange={e => updateField('notes', e.target.value)}
+          placeholder="Catatan atau observasi..."
         />
       </Field>
       <div style={{ gridColumn: 'span 2', display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 6 }}>
-        <Button variant="secondary" onClick={onCancel}>Cancel</Button>
-        <Button onClick={onSubmit}>Save Record</Button>
+        <Button variant="secondary" onClick={onCancel}>Batal</Button>
+        <Button onClick={onSubmit}>Simpan</Button>
       </div>
     </div>
   );

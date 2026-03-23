@@ -22,29 +22,10 @@ export function Navigation({ activeTab, onTabChange, tabs }: NavigationProps) {
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <span style={{ fontSize: 20 }}>🐄</span>
+          <span className="nav-icon">🐄</span>
           <div>
-            <div
-              style={{
-                fontFamily: 'monospace',
-                fontSize: 9,
-                letterSpacing: '0.2em',
-                color: '#7a6a52',
-                textTransform: 'uppercase',
-              }}
-            >
-              Ranch OS
-            </div>
-            <div
-              style={{
-                fontFamily: 'Georgia, serif',
-                fontWeight: 'bold',
-                fontSize: 14,
-                color: '#f5f0e8',
-              }}
-            >
-              Cattle Farm Manager
-            </div>
+            <div className="nav-subtitle">Ranch OS</div>
+            <div className="nav-title">Manajer Peternakan Sapi</div>
           </div>
         </div>
         <div style={{ display: 'flex', gap: 4 }}>
@@ -52,20 +33,14 @@ export function Navigation({ activeTab, onTabChange, tabs }: NavigationProps) {
             <button
               key={t.key}
               onClick={() => onTabChange(t.key)}
+              className="nav-tab"
               style={{
                 background: activeTab === t.key ? '#f5f0e8' : 'transparent',
                 color: activeTab === t.key ? '#2e2416' : '#9a8a72',
-                border: 'none',
-                padding: '7px 16px',
                 borderRadius: 100,
-                fontFamily: 'monospace',
-                fontSize: 11,
-                letterSpacing: '0.06em',
-                cursor: 'pointer',
-                transition: 'all 0.2s',
               }}
             >
-              {t.label} <span style={{ opacity: 0.5, fontSize: 10 }}>({t.count})</span>
+              {t.label} <span className="nav-tab-count">({t.count})</span>
             </button>
           ))}
         </div>
