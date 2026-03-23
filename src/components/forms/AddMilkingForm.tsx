@@ -3,7 +3,7 @@
 import React from 'react';
 import { Field } from '@/components/Field';
 import { Button } from '@/components/Button';
-import { Cow, SESSIONS } from '@/types';
+import { Cow, SESSIONS, MilkingRecord } from '@/types';
 
 interface MilkingFormData {
   cowId: string;
@@ -21,9 +21,10 @@ interface AddMilkingFormProps {
   onSubmit: () => void;
   onCancel: () => void;
   femaleCows: Cow[];
+  initialData?: MilkingRecord | null;
 }
 
-export function AddMilkingForm({ formData, onChange, onSubmit, onCancel, femaleCows }: AddMilkingFormProps) {
+export function AddMilkingForm({ formData, onChange, onSubmit, onCancel, femaleCows, initialData }: AddMilkingFormProps) {
   const updateField = (field: keyof MilkingFormData, value: string) => {
     onChange({ ...formData, [field]: value });
   };
@@ -46,6 +47,8 @@ export function AddMilkingForm({ formData, onChange, onSubmit, onCancel, femaleC
     appearance: 'none' as const,
     cursor: 'pointer',
   };
+
+  const isEdit = !!initialData;
 
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
@@ -116,7 +119,7 @@ export function AddMilkingForm({ formData, onChange, onSubmit, onCancel, femaleC
       </Field>
       <div style={{ gridColumn: 'span 2', display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 6 }}>
         <Button variant="secondary" onClick={onCancel}>Batal</Button>
-        <Button onClick={onSubmit}>Simpan</Button>
+        <Button onClick={onSubmit}>{isEdit ? 'Simpan Perubahan' : 'Simpan'}</Button>
       </div>
     </div>
   );

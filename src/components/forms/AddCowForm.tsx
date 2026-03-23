@@ -3,7 +3,7 @@
 import React from 'react';
 import { Field } from '@/components/Field';
 import { Button } from '@/components/Button';
-import { BREEDS, STATUSES } from '@/types';
+import { BREEDS, STATUSES, Cow } from '@/types';
 
 interface CowFormData {
   name: string;
@@ -22,9 +22,10 @@ interface AddCowFormProps {
   onChange: (data: CowFormData) => void;
   onSubmit: () => void;
   onCancel: () => void;
+  initialData?: Cow | null;
 }
 
-export function AddCowForm({ formData, onChange, onSubmit, onCancel }: AddCowFormProps) {
+export function AddCowForm({ formData, onChange, onSubmit, onCancel, initialData }: AddCowFormProps) {
   const updateField = (field: keyof CowFormData, value: string) => {
     onChange({ ...formData, [field]: value });
   };
@@ -47,6 +48,8 @@ export function AddCowForm({ formData, onChange, onSubmit, onCancel }: AddCowFor
     appearance: 'none',
     cursor: 'pointer',
   } as React.CSSProperties;
+
+  const isEdit = !!initialData;
 
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
@@ -129,7 +132,7 @@ export function AddCowForm({ formData, onChange, onSubmit, onCancel }: AddCowFor
       </Field>
       <div style={{ gridColumn: 'span 2', display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 6 }}>
         <Button variant="secondary" onClick={onCancel}>Batal</Button>
-        <Button onClick={onSubmit}>Daftarkan Sapi</Button>
+        <Button onClick={onSubmit}>{isEdit ? 'Simpan Perubahan' : 'Daftarkan Sapi'}</Button>
       </div>
     </div>
   );

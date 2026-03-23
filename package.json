@@ -7,17 +7,34 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:seed": "tsx src/db/seed.ts",
+    "db:setup": "npm run db:generate && npm run db:migrate && npm run db:seed"
   },
-  "keywords": ["cattle", "farm", "management", "nextjs"],
+  "keywords": [
+    "cattle",
+    "farm",
+    "management",
+    "nextjs"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@types/node": "^25.5.0",
     "@types/react": "^19.2.14",
+    "dotenv": "^17.3.1",
+    "drizzle-orm": "^0.45.1",
     "next": "^14.2.35",
+    "pg": "^8.20.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "typescript": "^5.9.3"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.20.0",
+    "drizzle-kit": "^0.31.10",
+    "tsx": "^4.21.0"
   }
 }

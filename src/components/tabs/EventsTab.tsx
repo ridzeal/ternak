@@ -5,12 +5,15 @@ import { useFarm } from '@/context/FarmContext';
 import { Button } from '@/components/Button';
 import { eventIcon } from '@/styles/theme';
 import { todayStr } from '@/lib/utils';
+import { FarmEvent } from '@/types';
 
 interface EventsTabProps {
   onAddEvent: () => void;
+  onEditEvent: (event: FarmEvent) => void;
+  onDeleteEvent: (id: string) => void;
 }
 
-export function EventsTab({ onAddEvent }: EventsTabProps) {
+export function EventsTab({ onAddEvent, onEditEvent, onDeleteEvent }: EventsTabProps) {
   const { events } = useFarm();
 
   return (
@@ -38,7 +41,7 @@ export function EventsTab({ onAddEvent }: EventsTabProps) {
                 borderLeft: overdue ? '4px solid #c0392b' : '4px solid #e0d4c0',
                 padding: '22px 20px',
                 display: 'grid',
-                gridTemplateColumns: '42px 1fr auto',
+                gridTemplateColumns: '42px 1fr auto auto',
                 gap: 14,
                 alignItems: 'flex-start'
               }}
@@ -98,6 +101,22 @@ export function EventsTab({ onAddEvent }: EventsTabProps) {
                 <div style={{ fontFamily: 'monospace', fontSize: 'var(--fs-md)', color: '#c0b0a0', marginTop: 4 }}>
                   {ev.id}
                 </div>
+              </div>
+              <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
+                <Button
+                  variant="secondary"
+                  onClick={() => onEditEvent(ev)}
+                  style={{ padding: '6px 12px', fontSize: 'var(--fs-sm)' }}
+                >
+                  ✏️
+                </Button>
+                <Button
+                  variant="secondary"
+                  onClick={() => onDeleteEvent(ev.id)}
+                  style={{ padding: '6px 12px', fontSize: 'var(--fs-sm)', color: '#c0392b' }}
+                >
+                  🗑️
+                </Button>
               </div>
             </div>
           );

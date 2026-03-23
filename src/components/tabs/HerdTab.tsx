@@ -4,12 +4,15 @@ import React from 'react';
 import { useFarm } from '@/context/FarmContext';
 import { Button } from '@/components/Button';
 import { statusStyle } from '@/styles/theme';
+import { Cow } from '@/types';
 
 interface HerdTabProps {
   onAddCow: () => void;
+  onEditCow: (cow: Cow) => void;
+  onDeleteCow: (cow: Cow) => void;
 }
 
-export function HerdTab({ onAddCow }: HerdTabProps) {
+export function HerdTab({ onAddCow, onEditCow, onDeleteCow }: HerdTabProps) {
   const { cows } = useFarm();
 
   return (
@@ -30,12 +33,12 @@ export function HerdTab({ onAddCow }: HerdTabProps) {
       }}>
         <div style={{
           display: 'grid',
-          gridTemplateColumns: '44px 1fr 150px 100px 90px 110px',
+          gridTemplateColumns: '44px 1fr 150px 100px 90px 110px 80px',
           gap: 14,
           padding: '18px 20px',
           borderBottom: '1.5px solid #e8e0d4'
         }}>
-          {['', 'Sapi', 'Jenis', 'Lahir', 'Berat', 'Status'].map((h, i) => (
+          {['', 'Sapi', 'Jenis', 'Lahir', 'Berat', 'Status', 'Aksi'].map((h, i) => (
             <div key={i} className="table-header">{h}</div>
           ))}
         </div>
@@ -45,7 +48,7 @@ export function HerdTab({ onAddCow }: HerdTabProps) {
             className="row table-padding"
             style={{
               display: 'grid',
-              gridTemplateColumns: '44px 1fr 150px 100px 90px 110px',
+              gridTemplateColumns: '44px 1fr 150px 100px 90px 110px 80px',
               gap: 14,
               alignItems: 'center',
               borderBottom: i < cows.length - 1 ? '1px solid #ede7dc' : 'none'
@@ -75,6 +78,22 @@ export function HerdTab({ onAddCow }: HerdTabProps) {
             <div className="table-cell">{cow.weight} kg</div>
             <div>
               <span className="status-badge" style={statusStyle[cow.status]}>{cow.status}</span>
+            </div>
+            <div style={{ display: 'flex', gap: 6 }}>
+              <Button
+                variant="secondary"
+                onClick={() => onEditCow(cow)}
+                style={{ padding: '6px 12px', fontSize: 'var(--fs-sm)' }}
+              >
+                ✏️
+              </Button>
+              <Button
+                variant="secondary"
+                onClick={() => onDeleteCow(cow)}
+                style={{ padding: '6px 12px', fontSize: 'var(--fs-sm)', color: '#c0392b' }}
+              >
+                🗑️
+              </Button>
             </div>
           </div>
         ))}

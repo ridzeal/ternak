@@ -1,51 +1,164 @@
 'use client';
 
-import React, { createContext, useContext, useState, useCallback, ReactNode, useMemo } from 'react';
+import React, { createContext, useContext, useState, useCallback, ReactNode, useMemo, useEffect } from 'react';
 import { Cow, MilkingRecord, FarmEvent, FarmContextType, FarmState } from '@/types';
 import { todayStr } from '@/lib/utils';
-
-const INIT_COWS: Cow[] = [
-  { id: 'C-001', name: 'Mentari', breed: 'Friesian Holstein', dob: '2020-03-12', gender: 'Betina', weight: 480, status: 'Laktasi', tag: 'FH-4821' },
-  { id: 'C-002', name: 'Melati', breed: 'Limousin', dob: '2019-07-04', gender: 'Betina', weight: 510, status: 'Kering', tag: 'LM-2219' },
-  { id: 'C-003', name: 'Bumi', breed: 'Simmental', dob: '2021-01-20', gender: 'Jantan', weight: 620, status: 'Aktif', tag: 'SM-3301' },
-];
-
-const INIT_MILKING: MilkingRecord[] = [
-  { id: 'M-001', cowId: 'C-001', cowName: 'Mentari', date: '2024-11-20', session: 'Pagi', volume: 12.5, fat: 3.8, protein: 3.2, notes: '' },
-  { id: 'M-002', cowId: 'C-001', cowName: 'Mentari', date: '2024-11-20', session: 'Malam', volume: 10.2, fat: 3.9, protein: 3.1, notes: 'Sedikit kurang dari biasanya' },
-  { id: 'M-003', cowId: 'C-002', cowName: 'Melati', date: '2024-11-19', session: 'Pagi', volume: 14.1, fat: 4.1, protein: 3.4, notes: '' },
-];
-
-const INIT_EVENTS: FarmEvent[] = [
-  { id: 'E-001', cowId: 'C-001', cowName: 'Mentari', date: '2024-11-15', type: 'Pemeriksaan Kesehatan', description: 'Vaksinasi rutin - booster FMD', vet: 'drh. Santoso', followUp: '2024-12-15' },
-  { id: 'E-002', cowId: 'C-002', cowName: 'Melati', date: '2024-11-10', type: 'Pengawinan', description: 'Inseminasi buatan dilakukan', vet: 'drh. Lestari', followUp: '2024-12-10' },
-  { id: 'E-003', cowId: 'C-003', cowName: 'Bumi', date: '2024-11-08', type: 'Penimbangan', description: 'Penimbangan bulanan - naik 12kg', vet: '-', followUp: '-' },
-];
 
 const FarmContext = createContext<FarmContextType | undefined>(undefined);
 
 const genId = (prefix: string, list: { id: string }[]) => `${prefix}-${String(list.length + 1).padStart(3, '0')}`;
 
 export function FarmProvider({ children }: { children: ReactNode }) {
-  const [cows, setCows] = useState<Cow[]>(INIT_COWS);
-  const [milking, setMilking] = useState<MilkingRecord[]>(INIT_MILKING);
-  const [events, setEvents] = useState<FarmEvent[]>(INIT_EVENTS);
+  const [cows, setCows] = useState<Cow[]>([]);
+  const [milking, setMilking] = useState<MilkingRecord[]>([]);
+  const [events, setEvents] = useState<FarmEvent[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const addCow = useCallback((cow: Omit<Cow, 'id'>) => {
-    setCows(prev => [...prev, { ...cow, id: genId('C', prev) }]);
+  // Fetch all data on mount
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const [cowsRes, milkingRes, eventsRes] = await Promise.all([
+          fetch('/api/cows'),
+          fetch('/api/milking'),
+          fetch('/api/events'),
+        ]);
+
+        if (cowsRes.ok) {
+          const cowsData = await cowsRes.json();
+          setCows(cowsData);
+        }
+
+        if (milkingRes.ok) {
+          const milkingData = await milkingRes.json();
+          setMilking(milkingData);
+        }
+
+        if (eventsRes.ok) {
+          const eventsData = await eventsRes.json();
+          setEvents(eventsData);
+        }
+      } catch (error) {
+        console.error('Error fetching farm data:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchData();
   }, []);
 
-  const addMilking = useCallback((record: Omit<MilkingRecord, 'id'>) => {
-    setMilking(prev => [...prev, { ...record, id: genId('M', prev) }]);
+  const addCow = useCallback(async (cow: Omit<Cow, 'id'>) => {
+    const newCow = { ...cow, id: genId('C', cows) };
+    const response = await fetch('/api/cows', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newCow),
+    });
+
+    if (response.ok) {
+      const savedCow = await response.json();
+      setCows(prev => [...prev, savedCow]);
+    }
+  }, [cows]);
+
+  const updateCow = useCallback(async (cow: Cow) => {
+    const response = await fetch('/api/cows', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(cow),
+    });
+
+    if (response.ok) {
+      setCows(prev => prev.map(c => c.id === cow.id ? cow : c));
+    }
   }, []);
 
-  const addEvent = useCallback((event: Omit<FarmEvent, 'id'>) => {
-    setEvents(prev => [...prev, { ...event, id: genId('E', prev) }]);
+  const deleteCow = useCallback(async (id: string) => {
+    const response = await fetch(`/api/cows?id=${id}`, {
+      method: 'DELETE',
+    });
+
+    if (response.ok) {
+      setCows(prev => prev.filter(c => c.id !== id));
+    }
+  }, []);
+
+  const addMilking = useCallback(async (record: Omit<MilkingRecord, 'id'>) => {
+    const newRecord = { ...record, id: genId('M', milking) };
+    const response = await fetch('/api/milking', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newRecord),
+    });
+
+    if (response.ok) {
+      const savedRecord = await response.json();
+      setMilking(prev => [...prev, savedRecord]);
+    }
+  }, [milking]);
+
+  const updateMilking = useCallback(async (record: MilkingRecord) => {
+    const response = await fetch('/api/milking', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(record),
+    });
+
+    if (response.ok) {
+      setMilking(prev => prev.map(r => r.id === record.id ? record : r));
+    }
+  }, []);
+
+  const deleteMilking = useCallback(async (id: string) => {
+    const response = await fetch(`/api/milking?id=${id}`, {
+      method: 'DELETE',
+    });
+
+    if (response.ok) {
+      setMilking(prev => prev.filter(r => r.id !== id));
+    }
+  }, []);
+
+  const addEvent = useCallback(async (event: Omit<FarmEvent, 'id'>) => {
+    const newEvent = { ...event, id: genId('E', events) };
+    const response = await fetch('/api/events', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newEvent),
+    });
+
+    if (response.ok) {
+      const savedEvent = await response.json();
+      setEvents(prev => [...prev, savedEvent]);
+    }
+  }, [events]);
+
+  const updateEvent = useCallback(async (event: FarmEvent) => {
+    const response = await fetch('/api/events', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(event),
+    });
+
+    if (response.ok) {
+      setEvents(prev => prev.map(e => e.id === event.id ? event : e));
+    }
+  }, []);
+
+  const deleteEvent = useCallback(async (id: string) => {
+    const response = await fetch(`/api/events?id=${id}`, {
+      method: 'DELETE',
+    });
+
+    if (response.ok) {
+      setEvents(prev => prev.filter(e => e.id !== id));
+    }
   }, []);
 
   const stats = useMemo(() => {
     const femaleCows = cows.filter(c => c.gender === 'Betina');
-    const totalMilk = milking.reduce((sum, m) => sum + m.volume, 0);
+    const totalMilk = milking.reduce((sum, m) => sum + parseFloat(String(m.volume)), 0);
     const overdueCount = events.filter(e => e.followUp && e.followUp !== '-' && e.followUp < todayStr()).length;
 
     return {
@@ -58,8 +171,12 @@ export function FarmProvider({ children }: { children: ReactNode }) {
     };
   }, [cows, milking, events]);
 
+  if (loading) {
+    return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>Loading...</div>;
+  }
+
   return (
-    <FarmContext.Provider value={{ cows, milking, events, addCow, addMilking, addEvent, stats }}>
+    <FarmContext.Provider value={{ cows, milking, events, addCow, updateCow, deleteCow, addMilking, updateMilking, deleteMilking, addEvent, updateEvent, deleteEvent, stats }}>
       {children}
     </FarmContext.Provider>
   );

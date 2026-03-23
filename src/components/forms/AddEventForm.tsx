@@ -3,7 +3,7 @@
 import React from 'react';
 import { Field } from '@/components/Field';
 import { Button } from '@/components/Button';
-import { Cow, ETYPES } from '@/types';
+import { Cow, ETYPES, FarmEvent } from '@/types';
 
 interface EventFormData {
   cowId: string;
@@ -20,9 +20,10 @@ interface AddEventFormProps {
   onSubmit: () => void;
   onCancel: () => void;
   cows: Cow[];
+  initialData?: FarmEvent | null;
 }
 
-export function AddEventForm({ formData, onChange, onSubmit, onCancel, cows }: AddEventFormProps) {
+export function AddEventForm({ formData, onChange, onSubmit, onCancel, cows, initialData }: AddEventFormProps) {
   const updateField = (field: keyof EventFormData, value: string) => {
     onChange({ ...formData, [field]: value });
   };
@@ -45,6 +46,8 @@ export function AddEventForm({ formData, onChange, onSubmit, onCancel, cows }: A
     appearance: 'none' as const,
     cursor: 'pointer',
   };
+
+  const isEdit = !!initialData;
 
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
@@ -104,7 +107,7 @@ export function AddEventForm({ formData, onChange, onSubmit, onCancel, cows }: A
       </Field>
       <div style={{ gridColumn: 'span 2', display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 6 }}>
         <Button variant="secondary" onClick={onCancel}>Batal</Button>
-        <Button onClick={onSubmit}>Catat Kegiatan</Button>
+        <Button onClick={onSubmit}>{isEdit ? 'Simpan Perubahan' : 'Catat Kegiatan'}</Button>
       </div>
     </div>
   );

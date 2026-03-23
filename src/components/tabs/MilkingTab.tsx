@@ -4,12 +4,15 @@ import React from 'react';
 import { useFarm } from '@/context/FarmContext';
 import { Button } from '@/components/Button';
 import { sessionStyle } from '@/styles/theme';
+import { MilkingRecord } from '@/types';
 
 interface MilkingTabProps {
   onAddMilking: () => void;
+  onEditMilking: (record: MilkingRecord) => void;
+  onDeleteMilking: (id: string) => void;
 }
 
-export function MilkingTab({ onAddMilking }: MilkingTabProps) {
+export function MilkingTab({ onAddMilking, onEditMilking, onDeleteMilking }: MilkingTabProps) {
   const { milking } = useFarm();
 
   return (
@@ -30,12 +33,12 @@ export function MilkingTab({ onAddMilking }: MilkingTabProps) {
       }}>
         <div style={{
           display: 'grid',
-          gridTemplateColumns: '1fr 110px 100px 90px 70px 70px 1fr',
+          gridTemplateColumns: '1fr 110px 100px 90px 70px 70px 1fr 50px',
           gap: 12,
           padding: '18px 20px',
           borderBottom: '1.5px solid #e8e0d4'
         }}>
-          {['Sapi', 'Tanggal', 'Sesi', 'Volume', 'Lemak %', 'Protein %', 'Catatan'].map((h, i) => (
+          {['Sapi', 'Tanggal', 'Sesi', 'Volume', 'Lemak %', 'Protein %', 'Catatan', 'Aksi'].map((h, i) => (
             <div key={i} className="table-header">{h}</div>
           ))}
         </div>
@@ -45,7 +48,7 @@ export function MilkingTab({ onAddMilking }: MilkingTabProps) {
             className="row table-padding"
             style={{
               display: 'grid',
-              gridTemplateColumns: '1fr 110px 100px 90px 70px 70px 1fr',
+              gridTemplateColumns: '1fr 110px 100px 90px 70px 70px 1fr 50px',
               gap: 12,
               alignItems: 'center',
               borderBottom: i < milking.length - 1 ? '1px solid #ede7dc' : 'none'
@@ -63,6 +66,22 @@ export function MilkingTab({ onAddMilking }: MilkingTabProps) {
             <div className="table-cell">{record.fat}%</div>
             <div className="table-cell">{record.protein}%</div>
             <div className="table-cell" style={{ fontStyle: 'italic' }}>{record.notes || '—'}</div>
+            <div style={{ display: 'flex', gap: 4 }}>
+              <Button
+                variant="secondary"
+                onClick={() => onEditMilking(record)}
+                style={{ padding: '6px 10px', fontSize: 'var(--fs-sm)' }}
+              >
+                ✏️
+              </Button>
+              <Button
+                variant="secondary"
+                onClick={() => onDeleteMilking(record.id)}
+                style={{ padding: '6px 10px', fontSize: 'var(--fs-sm)', color: '#c0392b' }}
+              >
+                🗑️
+              </Button>
+            </div>
           </div>
         ))}
       </div>

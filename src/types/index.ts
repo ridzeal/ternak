@@ -46,8 +46,14 @@ export interface FarmState {
 
 export interface FarmContextType extends FarmState {
   addCow: (cow: Omit<Cow, 'id'>) => void;
+  updateCow: (cow: Cow) => void;
+  deleteCow: (id: string) => void;
   addMilking: (record: Omit<MilkingRecord, 'id'>) => void;
+  updateMilking: (record: MilkingRecord) => void;
+  deleteMilking: (id: string) => void;
   addEvent: (event: Omit<FarmEvent, 'id'>) => void;
+  updateEvent: (event: FarmEvent) => void;
+  deleteEvent: (id: string) => void;
   stats: {
     totalHerd: number;
     femaleCount: number;
