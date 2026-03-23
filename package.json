@@ -1,0 +1,23 @@
+{
+  "name": "ternak",
+  "version": "1.0.0",
+  "description": "Cattle Farm Manager - Ranch OS",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "keywords": ["cattle", "farm", "management", "nextjs"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/node": "^25.5.0",
+    "@types/react": "^19.2.14",
+    "next": "^14.2.35",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "typescript": "^5.9.3"
+  }
+}
