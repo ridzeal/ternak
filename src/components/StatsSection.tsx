@@ -16,7 +16,7 @@ export function StatsSection() {
 
   return (
     <div
-      className="fade"
+      className="fade stats-grid"
       style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(4, 1fr)',

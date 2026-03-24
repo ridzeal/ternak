@@ -299,10 +299,10 @@ export default function HomePage() {
   const femaleCows = cows.filter((c) => c.gender === 'Betina');
 
   return (
-    <div style={{ minHeight: '100vh' }}>
+    <div style={{ minHeight: '100vh', overflowX: 'hidden' }}>
       <Navigation activeTab={activeTab} onTabChange={setActiveTab} tabs={tabsWithCount} />
 
-      <div style={{ maxWidth: 1060, margin: '0 auto', padding: '28px 28px' }}>
+      <div className="page-container" style={{ maxWidth: 1060, margin: '0 auto', padding: '28px 28px', width: '100%', overflowX: 'hidden' }}>
         <StatsSection />
 
         {activeTab === 'cows' && (

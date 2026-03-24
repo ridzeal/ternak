@@ -29,6 +29,7 @@ export function Modal({ isOpen, onClose, title, subtitle, children }: ModalProps
     >
       <div
         onClick={(e) => e.stopPropagation()}
+        className="modal-content"
         style={{
           background: '#faf6ee',
           borderRadius: 18,

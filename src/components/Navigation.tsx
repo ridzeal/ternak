@@ -10,7 +10,7 @@ interface NavigationProps {
 
 export function Navigation({ activeTab, onTabChange, tabs }: NavigationProps) {
   return (
-    <div style={{ background: '#2e2416', padding: '0 28px' }}>
+    <div style={{ background: '#2e2416', padding: '0 16px' }}>
       <div
         style={{
           maxWidth: 1060,
@@ -28,7 +28,7 @@ export function Navigation({ activeTab, onTabChange, tabs }: NavigationProps) {
             <div className="nav-title">Manajer Peternakan Sapi</div>
           </div>
         </div>
-        <div style={{ display: 'flex', gap: 4 }}>
+        <div style={{ display: 'flex', gap: 4, overflowX: 'auto', maxWidth: '60%' }}>
           {tabs.map((t) => (
             <button
               key={t.key}
@@ -38,6 +38,8 @@ export function Navigation({ activeTab, onTabChange, tabs }: NavigationProps) {
                 background: activeTab === t.key ? '#f5f0e8' : 'transparent',
                 color: activeTab === t.key ? '#2e2416' : '#9a8a72',
                 borderRadius: 100,
+                whiteSpace: 'nowrap',
+                flexShrink: 0,
               }}
             >
               {t.label} <span className="nav-tab-count">({t.count})</span>
