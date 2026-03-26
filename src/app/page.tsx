@@ -1,7 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useFarm } from '@/context/FarmContext';
+import { useAuth } from '@/context/AuthContext';
+import { useRouter } from 'next/navigation';
 import { Navigation } from '@/components/Navigation';
 import { StatsSection } from '@/components/StatsSection';
 import { HerdTab, MilkingTab, EventsTab } from '@/components/tabs';
@@ -9,6 +11,7 @@ import { Modal } from '@/components/Modal';
 import { Toast } from '@/components/Toast';
 import { Button } from '@/components/Button';
 import { AddCowForm, AddMilkingForm, AddEventForm } from '@/components/forms';
+import { UserManagement } from '@/components/UserManagement';
 import { todayStr } from '@/lib/utils';
 import { BREEDS, STATUSES, SESSIONS, ETYPES, Cow, MilkingRecord, FarmEvent } from '@/types';
 
@@ -50,13 +53,24 @@ const TABS = [
 ];
 
 export default function HomePage() {
+  const { user, loading } = useAuth();
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState('cows');
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/login');
+    }
+  }, [user, loading, router]);
+
   const [modalOpen, setModalOpen] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
   const [editingCow, setEditingCow] = useState<Cow | null>(null);
   const [editingMilking, setEditingMilking] = useState<MilkingRecord | null>(null);
   const [editingEvent, setEditingEvent] = useState<FarmEvent | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<{ type: string; id: string; name: string } | null>(null);
+  const [showUserManagement, setShowUserManagement] = useState(false);
 
   const { cows, milking, events, addCow, updateCow, deleteCow, addMilking, updateMilking, deleteMilking, addEvent, updateEvent, deleteEvent } = useFarm();
 
@@ -298,9 +312,33 @@ export default function HomePage() {
 
   const femaleCows = cows.filter((c) => c.gender === 'Betina');
 
+  // Show loading while checking auth
+  if (loading) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        minHeight: '100vh' 
+      }}>
+        Loading...
+      </div>
+    );
+  }
+
+  // Don't render if not authenticated (redirecting)
+  if (!user) {
+    return null;
+  }
+
   return (
     <div style={{ minHeight: '100vh', overflowX: 'hidden' }}>
-      <Navigation activeTab={activeTab} onTabChange={setActiveTab} tabs={tabsWithCount} />
+      <Navigation 
+        activeTab={activeTab} 
+        onTabChange={setActiveTab} 
+        tabs={tabsWithCount}
+        onOpenUsers={() => setShowUserManagement(true)}
+      />
 
       <div className="page-container" style={{ maxWidth: 1060, margin: '0 auto', padding: '28px 28px', width: '100%', overflowX: 'hidden' }}>
         <StatsSection />
@@ -447,6 +485,12 @@ export default function HomePage() {
       </Modal>
 
       <Toast message={toast} onClose={() => setToast(null)} />
+
+      {/* User Management Modal - Admin Only */}
+      <UserManagement 
+        isOpen={showUserManagement}
+        onClose={() => setShowUserManagement(false)}
+      />
     </div>
   );
 }

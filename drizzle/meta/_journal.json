@@ -5,8 +5,22 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1774284810537,
-      "tag": "0000_clear_mother_askani",
+      "when": 1774433345103,
+      "tag": "0000_gifted_gravity",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1774434182901,
+      "tag": "0001_condemned_martin_li",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1774434208307,
+      "tag": "0002_complete_paladin",
       "breakpoints": true
     }
   ]

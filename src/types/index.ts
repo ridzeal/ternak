@@ -1,6 +1,18 @@
+export type UserRole = 'admin' | 'manager' | 'worker';
 export type CowStatus = 'Laktasi' | 'Kering' | 'Hamil' | 'Aktif' | 'Karantina' | 'Terjual';
 export type MilkingSession = 'Pagi' | 'Siang' | 'Malam';
 export type EventType = 'Pemeriksaan Kesehatan' | 'Pengawinan' | 'Penimbangan' | 'Vaksinasi' | 'Pengobatan' | 'Melahirkan' | 'Pemberian Cacing' | 'Pemotongan Kuku';
+
+export interface User {
+  id: string;
+  email: string;
+  name: string;
+  role: UserRole;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  lastLoginAt?: string;
+}
 
 export interface Cow {
   id: string;

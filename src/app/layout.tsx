@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { FarmProvider } from '@/context/FarmContext';
+import { AuthProvider } from '@/context/AuthContext';
 import '@/styles/globals.css';
 
 export const metadata: Metadata = {
@@ -15,9 +16,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <FarmProvider>
-          {children}
-        </FarmProvider>
+        <AuthProvider>
+          <FarmProvider>
+            {children}
+          </FarmProvider>
+        </AuthProvider>
       </body>
     </html>
   );

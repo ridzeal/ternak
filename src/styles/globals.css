@@ -44,7 +44,14 @@ h3 { font-size: var(--fs-2xl); font-weight: bold; margin: 0; }
 /* Navigation */
 .nav-title { font-size: var(--fs-2xl); font-weight: bold; color: #f5f0e8; }
 .nav-subtitle { font-size: var(--fs-sm); letter-spacing: 0.2em; text-transform: uppercase; color: #7a6a52; }
-.nav-tab { font-size: var(--fs-lg); padding: 12px 24px; }
+.nav-tab { 
+  font-size: var(--fs-lg); 
+  padding: 10px 20px;
+  transition: all 0.2s;
+}
+.nav-tab:hover {
+  background: rgba(245, 240, 232, 0.1);
+}
 .nav-tab-count { font-size: 17px; opacity: 0.5; }
 .nav-icon { font-size: 38px; }
 
@@ -187,12 +194,39 @@ input:focus, select:focus, textarea:focus {
     --fs-4xl: 28px;
   }
 
-  /* Navigation */
+  /* Navigation - mobile layout */
+  nav {
+    padding: 10px 14px !important;
+  }
+
+  /* Show mobile elements */
+  .mobile-show {
+    display: block !important;
+  }
+
+  /* Hide desktop nav, show hamburger */
+  .desktop-nav {
+    display: none !important;
+  }
+
+  .mobile-nav-toggle {
+    display: flex !important;
+  }
+
+  /* Mobile menu full width */
+  .mobile-menu {
+    margin: 0 -14px !important;
+    padding: 16px 14px !important;
+  }
+
   .nav-icon { font-size: 28px !important; }
   .nav-title { font-size: var(--fs-lg) !important; }
   .nav-subtitle { font-size: 9px !important; }
-  .nav-tab { font-size: var(--fs-sm) !important; padding: 8px 14px !important; }
-  .nav-tab-count { font-size: 14px !important; }
+  .nav-tab { 
+    font-size: var(--fs-sm) !important; 
+    padding: 6px 12px !important;
+  }
+  .nav-tab-count { font-size: 12px !important; }
 
   /* Stats grid - go to 2 columns */
   .stats-grid {
@@ -207,7 +241,7 @@ input:focus, select:focus, textarea:focus {
   /* Hide table headers on mobile, use card layout */
   .mobile-hide { display: none !important; }
   .mobile-card { display: flex !important; }
-  
+
   /* Event cards mobile */
   .event-card {
     display: none !important;
@@ -235,7 +269,7 @@ input:focus, select:focus, textarea:focus {
   .page-container {
     padding: 16px !important;
   }
-  
+
   /* Headings */
   h2 { font-size: var(--fs-2xl) !important; }
 }

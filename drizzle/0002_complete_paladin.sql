@@ -33,3 +33,27 @@ CREATE TABLE "milking_records" (
 	"protein" numeric NOT NULL,
 	"notes" text
 );
+--> statement-breakpoint
+CREATE TABLE "sessions" (
+	"id" text PRIMARY KEY NOT NULL,
+	"user_id" text NOT NULL,
+	"token" text NOT NULL,
+	"expires_at" text NOT NULL,
+	"created_at" text NOT NULL,
+	CONSTRAINT "sessions_token_unique" UNIQUE("token")
+);
+--> statement-breakpoint
+CREATE TABLE "users" (
+	"id" text PRIMARY KEY NOT NULL,
+	"email" text NOT NULL,
+	"password_hash" text NOT NULL,
+	"name" text NOT NULL,
+	"role" text DEFAULT 'worker' NOT NULL,
+	"is_active" boolean DEFAULT true,
+	"created_at" text NOT NULL,
+	"updated_at" text NOT NULL,
+	"last_login_at" text,
+	CONSTRAINT "users_email_unique" UNIQUE("email")
+);
+--> statement-breakpoint
+ALTER TABLE "sessions" ADD CONSTRAINT "sessions_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;

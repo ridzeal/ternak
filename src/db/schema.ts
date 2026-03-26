@@ -1,4 +1,27 @@
-import { pgTable, text, integer, decimal, date } from 'drizzle-orm/pg-core';
+import { pgTable, text, integer, decimal, date, boolean } from 'drizzle-orm/pg-core';
+
+export const users = pgTable('users', {
+  id: text('id').primaryKey(),
+  email: text('email').notNull().unique(),
+  passwordHash: text('password_hash').notNull(),
+  name: text('name').notNull(),
+  role: text('role', {
+    enum: ['admin', 'manager', 'worker']
+  }).default('worker').notNull(),
+  isActive: boolean('is_active').default(true),
+  createdAt: text('created_at').notNull(),
+  updatedAt: text('updated_at').notNull(),
+  lastLoginAt: text('last_login_at'),
+});
+
+export const sessions = pgTable('sessions', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  token: text('token').notNull().unique(),
+  expiresAt: text('expires_at').notNull(),
+  createdAt: text('created_at').notNull(),
+});
 
 export const cows = pgTable('cows', {
   id: text('id').primaryKey(),
