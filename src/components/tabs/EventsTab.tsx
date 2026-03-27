@@ -133,80 +133,97 @@ export function EventsTab({ onAddEvent, onEditEvent, onDeleteEvent }: EventsTabP
           return (
             <div
               key={ev.id}
+              className="mobile-card-item"
               style={{
-                background: '#faf6ee',
-                borderRadius: 14,
-                border: '1px solid #e0d4c0',
                 borderLeft: overdue ? '4px solid #c0392b' : '4px solid #e0d4c0',
-                padding: 16,
-                width: '100%'
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
-                <div className="event-icon" style={{
-                  width: 38,
-                  height: 38,
-                  borderRadius: 10,
-                  background: '#f0e4d0',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  border: '1.5px solid #e0d0b8',
-                  flexShrink: 0
-                }}>
+              {/* Header with icon and title */}
+              <div className="mobile-card-header">
+                <div className="mobile-card-icon">
                   {eventIcon[ev.type] || '📋'}
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div className="event-title" style={{ wordBreak: 'break-word' }}>{ev.cowName}</div>
-                  <div style={{ fontSize: 'var(--fs-sm)', color: '#8a7d6b', marginTop: 2 }}>{ev.date}</div>
+                  <div className="mobile-card-title" style={{ wordBreak: 'break-word' }}>{ev.cowName}</div>
+                  <div className="mobile-card-subtitle">{ev.date}</div>
                 </div>
               </div>
+
+              {/* Type badge */}
               <div style={{
                 background: '#f0e4d0',
                 color: '#7a5a3a',
                 border: '1px solid #e0d0b8',
-                padding: '5px 16px',
+                padding: '5px 14px',
                 borderRadius: 100,
                 fontFamily: 'monospace',
-                fontSize: 'var(--fs-sm)',
+                fontSize: 'var(--fs-xs)',
                 display: 'inline-block',
-                marginBottom: 8,
+                marginBottom: 10,
                 maxWidth: '100%',
                 wordBreak: 'break-word'
               }}>
                 {ev.type}
               </div>
-              <div className="event-desc" style={{ marginBottom: 8, wordBreak: 'break-word' }}>{ev.description}</div>
+
+              {/* Description */}
+              <div style={{ 
+                fontSize: 'var(--fs-md)', 
+                color: '#3a2e20', 
+                marginBottom: 10, 
+                wordBreak: 'break-word',
+                lineHeight: 1.4
+              }}>
+                {ev.description}
+              </div>
+
+              {/* Vet info */}
               {ev.vet !== '-' && (
-                <div className="event-vet" style={{ fontSize: 'var(--fs-sm)', color: '#8a7d6b', marginBottom: 8, wordBreak: 'break-word' }}>👨‍⚕️ {ev.vet}</div>
+                <div style={{ 
+                  fontSize: 'var(--fs-sm)', 
+                  color: '#8a7d6b', 
+                  marginBottom: 10,
+                  padding: '8px 12px',
+                  background: '#f5f0e8',
+                  borderRadius: 6,
+                  wordBreak: 'break-word'
+                }}>
+                  👨‍⚕️ {ev.vet}
+                </div>
               )}
+
+              {/* Follow-up info */}
               {ev.followUp && ev.followUp !== '-' && (
                 <div style={{
-                  padding: '7px 12px',
+                  padding: '8px 12px',
                   borderRadius: 8,
                   fontFamily: 'monospace',
                   background: overdue ? '#fdecea' : '#f0e8da',
-                  color: overdue ? '#c0392b' : '#8a7d6b',
+                  color: overdue ? '#c0392b' : '#5a4a3a',
                   border: `1px solid ${overdue ? '#f1a1a1' : '#e0d4c0'}`,
                   fontSize: 'var(--fs-sm)',
                   marginBottom: 12,
-                  wordBreak: 'break-word'
+                  wordBreak: 'break-word',
+                  fontWeight: overdue ? 600 : 400,
                 }}>
                   {overdue ? '⚠️ ' : '📅 '}Tindak lanjut: {ev.followUp}
                 </div>
               )}
-              <div style={{ display: 'flex', gap: 8 }}>
+
+              {/* Action buttons */}
+              <div className="mobile-card-actions">
                 <Button
                   variant="secondary"
                   onClick={() => onEditEvent(ev)}
-                  style={{ flex: 1, padding: '12px', fontSize: 'var(--fs-md)' }}
+                  className="mobile-card-btn"
                 >
                   ✏️ Edit
                 </Button>
                 <Button
                   variant="secondary"
                   onClick={() => onDeleteEvent(ev.id)}
-                  style={{ padding: '12px 16px', fontSize: 'var(--fs-md)', color: '#c0392b' }}
+                  className="mobile-card-btn-icon"
+                  style={{ color: '#c0392b' }}
                 >
                   🗑️
                 </Button>

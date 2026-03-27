@@ -92,57 +92,73 @@ export function MilkingTab({ onAddMilking, onEditMilking, onDeleteMilking }: Mil
         {milking.map((record) => (
           <div
             key={record.id}
-            style={{
-              background: '#faf6ee',
-              borderRadius: 14,
-              border: '1px solid #e0d4c0',
-              padding: 16,
-              marginBottom: 12,
-              width: '100%'
-            }}
+            className="mobile-card-item"
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12, gap: 10 }}>
+            {/* Header with icon and cow info */}
+            <div className="mobile-card-header">
+              <div className="mobile-card-icon">
+                🥛
+              </div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div className="table-cell-bold" style={{ wordBreak: 'break-word' }}>{record.cowName}</div>
-                <div style={{ fontFamily: 'monospace', fontSize: 'var(--fs-sm)', color: '#8a7d6b' }}>{record.cowId}</div>
-              </div>
-              <span className="session-badge" style={sessionStyle[record.session]}>{record.session}</span>
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 12 }}>
-              <div style={{ minWidth: 0 }}>
-                <div style={{ fontSize: 'var(--fs-xs)', color: '#8a7d6b', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Tanggal</div>
-                <div style={{ fontSize: 'var(--fs-md)' }}>{record.date}</div>
-              </div>
-              <div style={{ minWidth: 0 }}>
-                <div style={{ fontSize: 'var(--fs-xs)', color: '#8a7d6b', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Volume</div>
-                <div style={{ fontSize: 'var(--fs-lg)', fontWeight: 'bold' }}>{record.volume}L</div>
-              </div>
-              <div style={{ minWidth: 0 }}>
-                <div style={{ fontSize: 'var(--fs-xs)', color: '#8a7d6b', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Lemak</div>
-                <div style={{ fontSize: 'var(--fs-md)' }}>{record.fat}%</div>
-              </div>
-              <div style={{ minWidth: 0 }}>
-                <div style={{ fontSize: 'var(--fs-xs)', color: '#8a7d6b', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Protein</div>
-                <div style={{ fontSize: 'var(--fs-md)' }}>{record.protein}%</div>
+                <div className="mobile-card-title" style={{ wordBreak: 'break-word' }}>{record.cowName}</div>
+                <div className="mobile-card-subtitle">{record.cowId}</div>
               </div>
             </div>
+
+            {/* Session badge */}
+            <span className="session-badge" style={sessionStyle[record.session]}>{record.session}</span>
+
+            {/* Info content */}
+            <div style={{ marginTop: 10 }}>
+              <div style={{ fontSize: 'var(--fs-md)', color: '#3a2e20', marginBottom: 8 }}>
+                <span style={{ fontSize: 'var(--fs-xs)', color: '#8a7d6b', textTransform: 'uppercase', letterSpacing: '0.1em', marginRight: 6 }}>TANGGAL</span>
+                {record.date}
+              </div>
+              <div style={{ fontSize: 'var(--fs-md)', color: '#3a2e20', marginBottom: 8 }}>
+                <span style={{ fontSize: 'var(--fs-xs)', color: '#8a7d6b', textTransform: 'uppercase', letterSpacing: '0.1em', marginRight: 6 }}>VOLUME</span>
+                <span style={{ fontWeight: 600, color: '#5a4a3a' }}>{record.volume}L</span>
+              </div>
+              <div style={{ fontSize: 'var(--fs-md)', color: '#3a2e20', marginBottom: 8 }}>
+                <span style={{ fontSize: 'var(--fs-xs)', color: '#8a7d6b', textTransform: 'uppercase', letterSpacing: '0.1em', marginRight: 6 }}>LEMAK</span>
+                {record.fat}%
+              </div>
+              <div style={{ fontSize: 'var(--fs-md)', color: '#3a2e20', marginBottom: 8 }}>
+                <span style={{ fontSize: 'var(--fs-xs)', color: '#8a7d6b', textTransform: 'uppercase', letterSpacing: '0.1em', marginRight: 6 }}>PROTEIN</span>
+                {record.protein}%
+              </div>
+            </div>
+
+            {/* Notes if present */}
             {record.notes && (
-              <div style={{ fontSize: 'var(--fs-sm)', color: '#8a7d6b', fontStyle: 'italic', marginBottom: 12, padding: '8px 12px', background: '#f5f0e8', borderRadius: 8, wordBreak: 'break-word' }}>
+              <div style={{
+                fontSize: 'var(--fs-sm)',
+                color: '#8a7d6b',
+                fontStyle: 'italic',
+                marginTop: 10,
+                marginBottom: 12,
+                padding: '8px 12px',
+                background: '#f5f0e8',
+                borderRadius: 6,
+                wordBreak: 'break-word',
+              }}>
                 📝 {record.notes}
               </div>
             )}
-            <div style={{ display: 'flex', gap: 8 }}>
+
+            {/* Action buttons */}
+            <div className="mobile-card-actions" style={{ marginTop: 12 }}>
               <Button
                 variant="secondary"
                 onClick={() => onEditMilking(record)}
-                style={{ flex: 1, padding: '12px', fontSize: 'var(--fs-md)' }}
+                className="mobile-card-btn"
               >
                 ✏️ Edit
               </Button>
               <Button
                 variant="secondary"
                 onClick={() => onDeleteMilking(record.id)}
-                style={{ padding: '12px 16px', fontSize: 'var(--fs-md)', color: '#c0392b' }}
+                className="mobile-card-btn-icon"
+                style={{ color: '#c0392b' }}
               >
                 🗑️
               </Button>
