@@ -15,6 +15,9 @@ interface CowFormData {
   status: string;
   sire: string;
   dam: string;
+  length: string;
+  chestCircumference: string;
+  reproductiveNotes: string;
 }
 
 interface AddCowFormProps {
@@ -105,6 +108,24 @@ export function AddCowForm({ formData, onChange, onSubmit, onCancel, initialData
           placeholder="mis. 480"
         />
       </Field>
+      <Field label="Panjang Tubuh (cm)">
+        <input
+          style={inputStyle}
+          type="number"
+          value={formData.length}
+          onChange={e => updateField('length', e.target.value)}
+          placeholder="mis. 120"
+        />
+      </Field>
+      <Field label="Lingkar Dada (cm)">
+        <input
+          style={inputStyle}
+          type="number"
+          value={formData.chestCircumference}
+          onChange={e => updateField('chestCircumference', e.target.value)}
+          placeholder="mis. 180"
+        />
+      </Field>
       <Field label="Status">
         <select
           style={selectStyle}
@@ -113,6 +134,14 @@ export function AddCowForm({ formData, onChange, onSubmit, onCancel, initialData
         >
           {STATUSES.map(s => <option key={s}>{s}</option>)}
         </select>
+      </Field>
+      <Field label="Keterangan Reproduksi">
+        <textarea
+          style={{ ...inputStyle, minHeight: 80, resize: 'vertical' }}
+          value={formData.reproductiveNotes}
+          onChange={e => updateField('reproductiveNotes', e.target.value)}
+          placeholder="mis: M4, M5 dara, AB1, AB3 hamil, AB5 keguguran..."
+        />
       </Field>
       <Field label="Sire (Ayah)">
         <input

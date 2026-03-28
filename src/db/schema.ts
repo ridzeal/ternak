@@ -30,12 +30,15 @@ export const cows = pgTable('cows', {
   dob: text('dob').notNull(),
   gender: text('gender', { enum: ['Betina', 'Jantan'] }).notNull(),
   weight: integer('weight').notNull(),
-  status: text('status', { 
-    enum: ['Laktasi', 'Kering', 'Hamil', 'Aktif', 'Karantina', 'Terjual'] 
+  status: text('status', {
+    enum: ['Laktasi', 'Kering', 'Hamil', 'Aktif', 'Karantina', 'Terjual']
   }).notNull(),
   tag: text('tag').notNull(),
   sire: text('sire'),
   dam: text('dam'),
+  length: integer('length'), // Body length in cm (Panjang)
+  chestCircumference: integer('chest_circumference'), // Chest circumference in cm (Lingkar dada)
+  reproductiveNotes: text('reproductive_notes'), // Reproductive status notes (Keterangan)
 });
 
 export const milkingRecords = pgTable('milking_records', {
@@ -47,6 +50,39 @@ export const milkingRecords = pgTable('milking_records', {
   volume: decimal('volume').notNull(),
   fat: decimal('fat').notNull(),
   protein: decimal('protein').notNull(),
+  lactose: decimal('lactose'),
+  totalSolids: decimal('total_solids'),
+  notes: text('notes'),
+});
+
+export const cowMeasurements = pgTable('cow_measurements', {
+  id: text('id').primaryKey(),
+  cowId: text('cow_id').notNull(),
+  date: text('date').notNull(),
+  weight: integer('weight').notNull(),
+  length: integer('length'),
+  chestCircumference: integer('chest_circumference'),
+  notes: text('notes'),
+});
+
+export const environmentalData = pgTable('environmental_data', {
+  id: text('id').primaryKey(),
+  date: text('date').notNull().unique(),
+  tempMin: decimal('temp_min'),
+  tempMax: decimal('temp_max'),
+  humidity: integer('humidity'),
+  thi: decimal('thi'), // Temperature Humidity Index (auto-calculated)
+  thunderstorm: boolean('thunderstorm').default(false),
+  notes: text('notes'),
+});
+
+export const milkCollection = pgTable('milk_collection', {
+  id: text('id').primaryKey(),
+  date: text('date').notNull(),
+  buyerName: text('buyer_name').notNull(), // e.g., "Kansas"
+  totalQuantity: decimal('total_quantity').notNull(),
+  fatAverage: decimal('fat_average'),
+  proteinAverage: decimal('protein_average'),
   notes: text('notes'),
 });
 

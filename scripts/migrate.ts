@@ -33,8 +33,20 @@ async function runMigrations() {
 
     console.log(`Found ${migrationFiles.length} migration(s)`);
 
+    // Get already applied migrations
+    const appliedResult = await pool.query('SELECT hash FROM "__drizzle_migrations"');
+    const appliedMigrations = new Set(appliedResult.rows.map(r => r.hash));
+
     // Run each migration
     for (const file of migrationFiles) {
+      const hash = file.replace('.sql', '');
+      
+      // Skip if already applied
+      if (appliedMigrations.has(hash)) {
+        console.log(`⏭️  Skipped (already applied): ${file}`);
+        continue;
+      }
+      
       const filePath = join(drizzleDir, file);
       const sql = readFileSync(filePath, 'utf-8');
       
@@ -50,7 +62,6 @@ async function runMigrations() {
       console.log(`✓ Applied: ${file}`);
 
       // Record migration
-      const hash = file.replace('.sql', '');
       await pool.query(
         `INSERT INTO "__drizzle_migrations" (hash, created_at) VALUES ($1, $2)`,
         [hash, Date.now()]

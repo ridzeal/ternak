@@ -16,7 +16,7 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { id, cowId, cowName, date, session, volume, fat, protein, notes } = body;
+    const { id, cowId, cowName, date, session, volume, fat, protein, lactose, totalSolids, notes } = body;
 
     if (!cowId || !volume) {
       return NextResponse.json({ error: 'Cow ID and volume are required' }, { status: 400 });
@@ -31,6 +31,8 @@ export async function POST(request: Request) {
       volume: String(volume),
       fat: String(fat || 0),
       protein: String(protein || 0),
+      lactose: lactose ? String(lactose) : null,
+      totalSolids: totalSolids ? String(totalSolids) : null,
       notes: notes || null,
     };
 
@@ -46,7 +48,7 @@ export async function POST(request: Request) {
 export async function PUT(request: Request) {
   try {
     const body = await request.json();
-    const { id, cowId, cowName, date, session, volume, fat, protein, notes } = body;
+    const { id, cowId, cowName, date, session, volume, fat, protein, lactose, totalSolids, notes } = body;
 
     if (!id) {
       return NextResponse.json({ error: 'Record ID is required' }, { status: 400 });
@@ -61,6 +63,8 @@ export async function PUT(request: Request) {
       volume: String(volume),
       fat: String(fat || 0),
       protein: String(protein || 0),
+      lactose: lactose ? String(lactose) : null,
+      totalSolids: totalSolids ? String(totalSolids) : null,
       notes: notes || null,
     };
 

@@ -29,7 +29,19 @@ async function seed() {
     }
 
     // Create demo cows
-    const demoCows = [
+    const demoCows: Array<{
+      id: string;
+      name: string;
+      breed: string;
+      dob: string;
+      gender: 'Betina' | 'Jantan';
+      weight: number;
+      status: 'Laktasi' | 'Kering' | 'Hamil' | 'Aktif' | 'Karantina' | 'Terjual';
+      tag: string;
+      length: number;
+      chestCircumference: number;
+      reproductiveNotes: string;
+    }> = [
       { id: 'C-001', name: 'Garut 1', breed: 'Friesian Holstein', dob: '2020-03-12', gender: 'Betina', weight: 480, status: 'Laktasi', tag: 'FH-4821', length: 150, chestCircumference: 201, reproductiveNotes: 'M4, M5 dara' },
       { id: 'C-002', name: 'Garut 2', breed: 'Friesian Holstein', dob: '2019-07-04', gender: 'Betina', weight: 510, status: 'Laktasi', tag: 'FH-4822', length: 160, chestCircumference: 194, reproductiveNotes: 'AB1, AB3 hamil' },
       { id: 'C-003', name: 'Garut 3', breed: 'Limousin', dob: '2021-01-20', gender: 'Betina', weight: 520, status: 'Kering', tag: 'LM-2219', length: 150, chestCircumference: 200, reproductiveNotes: 'AB5 keguguran' },
@@ -54,12 +66,24 @@ async function seed() {
 
     // Create demo milking records (today's session)
     const today = new Date().toISOString().split('T')[0];
-    const demoMilkings = [
-      { id: `M-001`, cowId: 'C-001', cowName: 'Garut 1', date: today, session: 'Pagi', volume: 12.5, fat: 3.8, protein: 3.2, notes: '' },
-      { id: `M-002`, cowId: 'C-001', cowName: 'Garut 1', date: today, session: 'Siang', volume: 10.2, fat: 3.9, protein: 3.1, notes: '' },
-      { id: `M-003`, cowId: 'C-002', cowName: 'Garut 2', date: today, session: 'Pagi', volume: 14.1, fat: 4.1, protein: 3.4, notes: '' },
-      { id: `M-004`, cowId: 'C-005', cowName: 'Malang 2', date: today, session: 'Pagi', volume: 11.8, fat: 3.7, protein: 3.0, notes: '' },
-      { id: `M-005`, cowId: 'C-006', cowName: 'AB 1', date: today, session: 'Pagi', volume: 13.2, fat: 4.0, protein: 3.3, notes: '' },
+    const demoMilkings: Array<{
+      id: string;
+      cowId: string;
+      cowName: string;
+      date: string;
+      session: 'Pagi' | 'Siang' | 'Malam';
+      volume: string;
+      fat: string;
+      protein: string;
+      lactose: string;
+      totalSolids: string;
+      notes: string;
+    }> = [
+      { id: `M-001`, cowId: 'C-001', cowName: 'Garut 1', date: today, session: 'Pagi', volume: '12.5', fat: '3.8', protein: '3.2', lactose: '4.5', totalSolids: '12.8', notes: '' },
+      { id: `M-002`, cowId: 'C-001', cowName: 'Garut 1', date: today, session: 'Siang', volume: '10.2', fat: '3.9', protein: '3.1', lactose: '4.6', totalSolids: '12.9', notes: '' },
+      { id: `M-003`, cowId: 'C-002', cowName: 'Garut 2', date: today, session: 'Pagi', volume: '14.1', fat: '4.1', protein: '3.4', lactose: '4.7', totalSolids: '13.2', notes: '' },
+      { id: `M-004`, cowId: 'C-005', cowName: 'Malang 2', date: today, session: 'Pagi', volume: '11.8', fat: '3.7', protein: '3.0', lactose: '4.5', totalSolids: '12.5', notes: '' },
+      { id: `M-005`, cowId: 'C-006', cowName: 'AB 1', date: today, session: 'Pagi', volume: '13.2', fat: '4.0', protein: '3.3', lactose: '4.6', totalSolids: '13.0', notes: '' },
     ];
 
     let milkingsCreated = 0;
@@ -80,7 +104,16 @@ async function seed() {
     console.log(`✓ ${milkingsCreated} milking records created`);
 
     // Create demo events
-    const demoEvents = [
+    const demoEvents: Array<{
+      id: string;
+      cowId: string;
+      cowName: string;
+      date: string;
+      type: 'Pemeriksaan Kesehatan' | 'Pengawinan' | 'Penimbangan' | 'Vaksinasi' | 'Pengobatan' | 'Melahirkan' | 'Pemberian Cacing' | 'Pemotongan Kuku';
+      description: string;
+      vet: string;
+      followUp: string;
+    }> = [
       { id: `E-001`, cowId: 'C-001', cowName: 'Garut 1', date: today, type: 'Pemeriksaan Kesehatan', description: 'Routine vaccination - FMD booster', vet: 'drh. Santoso', followUp: '2026-04-25' },
       { id: `E-002`, cowId: 'C-002', cowName: 'Garut 2', date: today, type: 'Pengawinan', description: 'Artificial insemination performed', vet: 'drh. Lestari', followUp: '2026-04-25' },
       { id: `E-003`, cowId: 'C-004', cowName: 'Malang 1', date: today, type: 'Penimbangan', description: 'Monthly weight check - gained 15kg', vet: '-', followUp: '-' },

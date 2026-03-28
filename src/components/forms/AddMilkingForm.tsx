@@ -12,6 +12,8 @@ interface MilkingFormData {
   volume: string;
   fat: string;
   protein: string;
+  lactose: string;
+  totalSolids: string;
   notes: string;
 }
 
@@ -94,18 +96,40 @@ export function AddMilkingForm({ formData, onChange, onSubmit, onCancel, femaleC
         <input
           style={inputStyle}
           type="number"
+          step="0.1"
           value={formData.fat}
           onChange={e => updateField('fat', e.target.value)}
           placeholder="mis. 3.8"
         />
       </Field>
-      <Field label="Protein (%)" col={2}>
+      <Field label="Protein (%)">
         <input
           style={inputStyle}
           type="number"
+          step="0.1"
           value={formData.protein}
           onChange={e => updateField('protein', e.target.value)}
           placeholder="mis. 3.2"
+        />
+      </Field>
+      <Field label="Laktosa (%)">
+        <input
+          style={inputStyle}
+          type="number"
+          step="0.1"
+          value={formData.lactose}
+          onChange={e => updateField('lactose', e.target.value)}
+          placeholder="min. 4.5"
+        />
+      </Field>
+      <Field label="Total Solids (%)">
+        <input
+          style={inputStyle}
+          type="number"
+          step="0.1"
+          value={formData.totalSolids}
+          onChange={e => updateField('totalSolids', e.target.value)}
+          placeholder="12.5-13.5"
         />
       </Field>
       <Field label="Catatan" col={2}>

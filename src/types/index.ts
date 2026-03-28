@@ -25,6 +25,9 @@ export interface Cow {
   tag: string;
   sire?: string;
   dam?: string;
+  length?: number; // Body length in cm (Panjang)
+  chestCircumference?: number; // Chest circumference in cm (Lingkar dada)
+  reproductiveNotes?: string; // Reproductive status notes (Keterangan)
 }
 
 export interface MilkingRecord {
@@ -36,6 +39,39 @@ export interface MilkingRecord {
   volume: number;
   fat: number;
   protein: number;
+  lactose?: number;
+  totalSolids?: number;
+  notes?: string;
+}
+
+export interface CowMeasurement {
+  id: string;
+  cowId: string;
+  date: string;
+  weight: number;
+  length?: number;
+  chestCircumference?: number;
+  notes?: string;
+}
+
+export interface EnvironmentalData {
+  id: string;
+  date: string;
+  tempMin?: number;
+  tempMax?: number;
+  humidity?: number;
+  thi?: number;
+  thunderstorm?: boolean;
+  notes?: string;
+}
+
+export interface MilkCollection {
+  id: string;
+  date: string;
+  buyerName: string;
+  totalQuantity: number;
+  fatAverage?: number;
+  proteinAverage?: number;
   notes?: string;
 }
 

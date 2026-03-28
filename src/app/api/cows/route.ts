@@ -16,7 +16,7 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { id, name, breed, dob, gender, weight, status, tag, sire, dam } = body;
+    const { id, name, breed, dob, gender, weight, status, tag, sire, dam, length, chestCircumference, reproductiveNotes } = body;
 
     if (!name || !tag || !dob) {
       return NextResponse.json({ error: 'Name, tag, and date of birth are required' }, { status: 400 });
@@ -33,6 +33,9 @@ export async function POST(request: Request) {
       tag,
       sire: sire || null,
       dam: dam || null,
+      length: length ? Number(length) : null,
+      chestCircumference: chestCircumference ? Number(chestCircumference) : null,
+      reproductiveNotes: reproductiveNotes || null,
     };
 
     await db.insert(cows).values(newCow);
@@ -47,7 +50,7 @@ export async function POST(request: Request) {
 export async function PUT(request: Request) {
   try {
     const body = await request.json();
-    const { id, name, breed, dob, gender, weight, status, tag, sire, dam } = body;
+    const { id, name, breed, dob, gender, weight, status, tag, sire, dam, length, chestCircumference, reproductiveNotes } = body;
 
     if (!id) {
       return NextResponse.json({ error: 'Cow ID is required' }, { status: 400 });
@@ -64,6 +67,9 @@ export async function PUT(request: Request) {
       tag,
       sire: sire || null,
       dam: dam || null,
+      length: length ? Number(length) : null,
+      chestCircumference: chestCircumference ? Number(chestCircumference) : null,
+      reproductiveNotes: reproductiveNotes || null,
     };
 
     await db.update(cows).set(updatedCow).where(eq(cows.id, id));

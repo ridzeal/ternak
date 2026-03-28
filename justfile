@@ -45,3 +45,16 @@ create-admin:
 # Seed data only (add demo data to existing DB)
 seed:
     npm run db:seed
+
+# Testing
+test:
+    npm run test
+
+test-headed:
+    npm run test:headed
+
+test-ui:
+    npm run test:ui
+
+test-debug:
+    npm run test:debug

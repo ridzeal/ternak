@@ -10,7 +10,8 @@ import { HerdTab, MilkingTab, EventsTab } from '@/components/tabs';
 import { Modal } from '@/components/Modal';
 import { Toast } from '@/components/Toast';
 import { Button } from '@/components/Button';
-import { AddCowForm, AddMilkingForm, AddEventForm } from '@/components/forms';
+import { AddCowForm, AddMilkingForm, AddEventForm, DailyMilkingForm } from '@/components/forms';
+import { DailyMilkReport } from '@/components/reports/DailyMilkReport';
 import { UserManagement } from '@/components/UserManagement';
 import { todayStr } from '@/lib/utils';
 import { BREEDS, STATUSES, SESSIONS, ETYPES, Cow, MilkingRecord, FarmEvent } from '@/types';
@@ -25,6 +26,9 @@ interface CowFormData {
   tag: string;
   sire: string;
   dam: string;
+  length: string;
+  chestCircumference: string;
+  reproductiveNotes: string;
 }
 
 interface MilkingFormData {
@@ -34,6 +38,8 @@ interface MilkingFormData {
   volume: string;
   fat: string;
   protein: string;
+  lactose: string;
+  totalSolids: string;
   notes: string;
 }
 
@@ -49,6 +55,8 @@ interface EventFormData {
 const TABS = [
   { key: 'cows', label: '🐄 Ternak', count: 0 },
   { key: 'milking', label: '🥛 Pemerahan', count: 0 },
+  { key: 'daily-entry', label: '📝 Input Harian', count: 0 },
+  { key: 'reports', label: '📊 Laporan', count: 0 },
   { key: 'events', label: '📋 Kegiatan', count: 0 },
 ];
 
@@ -85,6 +93,9 @@ export default function HomePage() {
     tag: '',
     sire: '',
     dam: '',
+    length: '',
+    chestCircumference: '',
+    reproductiveNotes: '',
   });
 
   const [milkingForm, setMilkingForm] = useState<MilkingFormData>({
@@ -94,6 +105,8 @@ export default function HomePage() {
     volume: '',
     fat: '',
     protein: '',
+    lactose: '',
+    totalSolids: '',
     notes: '',
   });
 
@@ -122,6 +135,9 @@ export default function HomePage() {
       tag: cow.tag,
       sire: cow.sire || '',
       dam: cow.dam || '',
+      length: String(cow.length || ''),
+      chestCircumference: String(cow.chestCircumference || ''),
+      reproductiveNotes: cow.reproductiveNotes || '',
     });
     setModalOpen('cow-edit');
   };
@@ -135,6 +151,8 @@ export default function HomePage() {
       volume: String(record.volume),
       fat: String(record.fat),
       protein: String(record.protein),
+      lactose: String(record.lactose || ''),
+      totalSolids: String(record.totalSolids || ''),
       notes: record.notes || '',
     });
     setModalOpen('milk-edit');
@@ -161,16 +179,34 @@ export default function HomePage() {
     if (editingCow) {
       updateCow({
         ...editingCow,
-        ...cowForm,
+        name: cowForm.name,
+        breed: cowForm.breed,
+        gender: cowForm.gender,
+        dob: cowForm.dob,
         weight: +cowForm.weight || 0,
         status: cowForm.status as Cow['status'],
+        tag: cowForm.tag,
+        sire: cowForm.sire,
+        dam: cowForm.dam,
+        length: cowForm.length ? +cowForm.length : undefined,
+        chestCircumference: cowForm.chestCircumference ? +cowForm.chestCircumference : undefined,
+        reproductiveNotes: cowForm.reproductiveNotes || undefined,
       });
       flash('Data sapi berhasil diperbarui ✓');
     } else {
       addCow({
-        ...cowForm,
+        name: cowForm.name,
+        breed: cowForm.breed,
+        gender: cowForm.gender,
+        dob: cowForm.dob,
         weight: +cowForm.weight || 0,
         status: cowForm.status as Cow['status'],
+        tag: cowForm.tag,
+        sire: cowForm.sire,
+        dam: cowForm.dam,
+        length: cowForm.length ? +cowForm.length : undefined,
+        chestCircumference: cowForm.chestCircumference ? +cowForm.chestCircumference : undefined,
+        reproductiveNotes: cowForm.reproductiveNotes || undefined,
       });
       flash('Sapi berhasil didaftarkan ✓');
     }
@@ -188,22 +224,30 @@ export default function HomePage() {
     if (editingMilking) {
       updateMilking({
         ...editingMilking,
-        ...milkingForm,
+        cowId: milkingForm.cowId,
         cowName: cow?.name || editingMilking.cowName,
+        date: milkingForm.date,
+        session: milkingForm.session as MilkingRecord['session'],
         volume: +milkingForm.volume,
         fat: +milkingForm.fat || 0,
         protein: +milkingForm.protein || 0,
-        session: milkingForm.session as MilkingRecord['session'],
+        lactose: milkingForm.lactose ? +milkingForm.lactose : undefined,
+        totalSolids: milkingForm.totalSolids ? +milkingForm.totalSolids : undefined,
+        notes: milkingForm.notes,
       });
       flash('Data pemerahan berhasil diperbarui ✓');
     } else {
       addMilking({
-        ...milkingForm,
+        cowId: milkingForm.cowId,
         cowName: cow?.name || '',
+        date: milkingForm.date,
+        session: milkingForm.session as MilkingRecord['session'],
         volume: +milkingForm.volume,
         fat: +milkingForm.fat || 0,
         protein: +milkingForm.protein || 0,
-        session: milkingForm.session as MilkingRecord['session'],
+        lactose: milkingForm.lactose ? +milkingForm.lactose : undefined,
+        totalSolids: milkingForm.totalSolids ? +milkingForm.totalSolids : undefined,
+        notes: milkingForm.notes,
       });
       flash('Data pemerahan berhasil disimpan ✓');
     }
@@ -250,6 +294,9 @@ export default function HomePage() {
       tag: '',
       sire: '',
       dam: '',
+      length: '',
+      chestCircumference: '',
+      reproductiveNotes: '',
     });
   };
 
@@ -261,6 +308,8 @@ export default function HomePage() {
       volume: '',
       fat: '',
       protein: '',
+      lactose: '',
+      totalSolids: '',
       notes: '',
     });
   };
@@ -356,6 +405,15 @@ export default function HomePage() {
             onEditMilking={openEditMilking}
             onDeleteMilking={handleDeleteMilking}
           />
+        )}
+        {activeTab === 'daily-entry' && (
+          <DailyMilkingForm onSaveComplete={() => {
+            flash('Data harian berhasil disimpan ✓');
+            // Trigger a refresh by navigating away and back or using context
+          }} />
+        )}
+        {activeTab === 'reports' && (
+          <DailyMilkReport />
         )}
         {activeTab === 'events' && (
           <EventsTab

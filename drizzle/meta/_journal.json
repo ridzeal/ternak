@@ -22,6 +22,41 @@
       "when": 1774434208307,
       "tag": "0002_complete_paladin",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1774584668730,
+      "tag": "0003_flaky_sue_storm",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1774584984848,
+      "tag": "0004_legal_meteorite",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1774585136827,
+      "tag": "0005_charming_speedball",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1774585194133,
+      "tag": "0006_graceful_true_believers",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1774585262809,
+      "tag": "0007_free_toad",
+      "breakpoints": true
     }
   ]
 }
