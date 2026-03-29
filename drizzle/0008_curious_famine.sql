@@ -1,3 +1,13 @@
+CREATE TABLE "cow_measurements" (
+	"id" text PRIMARY KEY NOT NULL,
+	"cow_id" text NOT NULL,
+	"date" text NOT NULL,
+	"weight" integer NOT NULL,
+	"length" integer,
+	"chest_circumference" integer,
+	"notes" text
+);
+--> statement-breakpoint
 CREATE TABLE "cows" (
 	"id" text PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
@@ -8,7 +18,22 @@ CREATE TABLE "cows" (
 	"status" text NOT NULL,
 	"tag" text NOT NULL,
 	"sire" text,
-	"dam" text
+	"dam" text,
+	"length" integer,
+	"chest_circumference" integer,
+	"reproductive_notes" text
+);
+--> statement-breakpoint
+CREATE TABLE "environmental_data" (
+	"id" text PRIMARY KEY NOT NULL,
+	"date" text NOT NULL,
+	"temp_min" numeric,
+	"temp_max" numeric,
+	"humidity" integer,
+	"thi" numeric,
+	"thunderstorm" boolean DEFAULT false,
+	"notes" text,
+	CONSTRAINT "environmental_data_date_unique" UNIQUE("date")
 );
 --> statement-breakpoint
 CREATE TABLE "farm_events" (
@@ -22,6 +47,16 @@ CREATE TABLE "farm_events" (
 	"follow_up" text NOT NULL
 );
 --> statement-breakpoint
+CREATE TABLE "milk_collection" (
+	"id" text PRIMARY KEY NOT NULL,
+	"date" text NOT NULL,
+	"buyer_name" text NOT NULL,
+	"total_quantity" numeric NOT NULL,
+	"fat_average" numeric,
+	"protein_average" numeric,
+	"notes" text
+);
+--> statement-breakpoint
 CREATE TABLE "milking_records" (
 	"id" text PRIMARY KEY NOT NULL,
 	"cow_id" text NOT NULL,
@@ -31,6 +66,8 @@ CREATE TABLE "milking_records" (
 	"volume" numeric NOT NULL,
 	"fat" numeric NOT NULL,
 	"protein" numeric NOT NULL,
+	"lactose" numeric,
+	"total_solids" numeric,
 	"notes" text
 );
 --> statement-breakpoint

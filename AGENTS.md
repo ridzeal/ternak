@@ -34,6 +34,8 @@
 just test            # Run all Playwright tests
 just test-headed     # Run with visible browser
 just test-ui         # Interactive UI mode
+just seed            # Seed demo data (after reset)
+just reset           # Full DB reset + seed
 ```
 
 **Test location:** All E2E tests go in `tests/e2e/` folder
@@ -57,11 +59,22 @@ npx tsc --noEmit && npm run lint && npm test && npm run build
 ### Essential Commands
 
 ```bash
-npm run dev          # Start dev server
+just dev             # Start dev server on port 7500 (RECOMMENDED)
+just seed            # Seed demo data
+just reset           # Reset DB + seed (DANGER: wipes all data)
+just test            # Run Playwright tests
+just test-ui         # Interactive test UI
+
+# NPM alternatives
+npm run dev          # Start dev server (port 3000)
+npm run db:seed      # Seed demo data
+npm run db:reset     # Reset DB + seed
 npm run db:generate  # Generate migration
 npm run db:migrate   # Apply migration
 npm test             # Run tests
 ```
+
+**Dev server:** `just dev` runs on **http://localhost:7500** by default
 
 ### Git Commit Format
 

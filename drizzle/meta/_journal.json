@@ -57,6 +57,13 @@
       "when": 1774585262809,
       "tag": "0007_free_toad",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1774717169674,
+      "tag": "0008_curious_famine",
+      "breakpoints": true
     }
   ]
 }

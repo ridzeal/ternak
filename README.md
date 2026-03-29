@@ -18,6 +18,7 @@ A modern cattle farm management system built with Next.js and PostgreSQL.
 ### Installation
 
 1. Install dependencies:
+
    ```bash
    npm install
    ```
@@ -25,27 +26,32 @@ A modern cattle farm management system built with Next.js and PostgreSQL.
 2. Set up your PostgreSQL database connection:
    - Create a `.env` file in the root directory
    - Add your database URL:
-     ```
+
+     ```bash
      POSTGRES_URL=postgresql://user:password@localhost:5432/ternak
      ```
 
 3. Generate and run database migrations:
+
    ```bash
    npm run db:generate
    npm run db:migrate
    ```
 
 4. Seed the database with initial data:
+
    ```bash
    npm run db:seed
    ```
 
    Or run all database setup commands at once:
+
    ```bash
    npm run db:setup
    ```
 
 5. Start the development server:
+
    ```bash
    npm run dev
    ```
@@ -61,7 +67,7 @@ Open [http://localhost:3000](http://localhost:3000) to see the application.
 
 ## Project Structure
 
-```
+```bash
 src/
 ├── app/                  # Next.js App Router
 │   ├── api/              # API routes
