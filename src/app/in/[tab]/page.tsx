@@ -91,7 +91,7 @@ export default function InPage({ params }: InPageProps) {
   const [deleteConfirm, setDeleteConfirm] = useState<{ type: string; id: string; name: string } | null>(null);
   const [showUserManagement, setShowUserManagement] = useState(false);
 
-  const { cows, milking, events, addCow, updateCow, deleteCow, addMilking, updateMilking, deleteMilking, addEvent, updateEvent, deleteEvent } = useFarm();
+  const { cows, milking, events, addCow, updateCow, deleteCow, addMilking, updateMilking, deleteMilking, addEvent, updateEvent, deleteEvent, refreshData } = useFarm();
 
   // Form states
   const [cowForm, setCowForm] = useState<CowFormData>({
@@ -426,9 +426,12 @@ export default function InPage({ params }: InPageProps) {
           />
         )}
         {activeTab === 'daily' && (
-          <DailyMilkingForm onSaveComplete={() => {
-            flash('Data harian berhasil disimpan ✓');
-          }} />
+          <DailyMilkingForm 
+            onSaveComplete={() => {
+              flash('Data harian berhasil disimpan ✓');
+            }}
+            onRefresh={refreshData}
+          />
         )}
         {activeTab === 'reports' && (
           <DailyMilkReport />

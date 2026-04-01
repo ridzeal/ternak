@@ -156,6 +156,34 @@ export function FarmProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  // Refresh all data from API
+  const refreshData = useCallback(async () => {
+    try {
+      const [cowsRes, milkingRes, eventsRes] = await Promise.all([
+        fetch('/api/cows'),
+        fetch('/api/milking'),
+        fetch('/api/events'),
+      ]);
+
+      if (cowsRes.ok) {
+        const cowsData = await cowsRes.json();
+        setCows(cowsData);
+      }
+
+      if (milkingRes.ok) {
+        const milkingData = await milkingRes.json();
+        setMilking(milkingData);
+      }
+
+      if (eventsRes.ok) {
+        const eventsData = await eventsRes.json();
+        setEvents(eventsData);
+      }
+    } catch (error) {
+      console.error('Error refreshing farm data:', error);
+    }
+  }, []);
+
   const stats = useMemo(() => {
     const femaleCows = cows.filter(c => c.gender === 'Betina');
     const totalMilk = milking.reduce((sum, m) => sum + parseFloat(String(m.volume)), 0);
@@ -176,7 +204,7 @@ export function FarmProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <FarmContext.Provider value={{ cows, milking, events, addCow, updateCow, deleteCow, addMilking, updateMilking, deleteMilking, addEvent, updateEvent, deleteEvent, stats }}>
+    <FarmContext.Provider value={{ cows, milking, events, addCow, updateCow, deleteCow, addMilking, updateMilking, deleteMilking, addEvent, updateEvent, deleteEvent, refreshData, stats }}>
       {children}
     </FarmContext.Provider>
   );

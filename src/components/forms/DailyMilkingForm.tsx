@@ -15,11 +15,12 @@ interface CowMilkingEntry {
   notes: string;
 }
 
-interface DailyMilkingFormProps {
+export interface DailyMilkingFormProps {
   onSaveComplete?: () => void;
+  onRefresh?: () => void;
 }
 
-export function DailyMilkingForm({ onSaveComplete }: DailyMilkingFormProps) {
+export function DailyMilkingForm({ onSaveComplete, onRefresh }: DailyMilkingFormProps) {
   const { cows, milking } = useFarm();
   const [selectedDate, setSelectedDate] = useState(todayStr());
   const [entries, setEntries] = useState<CowMilkingEntry[]>([]);
@@ -74,11 +75,22 @@ export function DailyMilkingForm({ onSaveComplete }: DailyMilkingFormProps) {
           if (entry) {
             if (record.session === 'Pagi') {
               entry.session1 = String(record.volume);
-              entry.notes = record.notes || '';
+              // Load notes from Pagi session (primary session for notes)
+              if (record.notes && record.notes.trim() !== '') {
+                entry.notes = record.notes;
+              }
             } else if (record.session === 'Siang') {
               entry.session2 = String(record.volume);
+              // Also check Siang for notes if Pagi didn't have any
+              if (record.notes && record.notes.trim() !== '' && !entry.notes) {
+                entry.notes = record.notes;
+              }
             } else if (record.session === 'Malam') {
               entry.session3 = String(record.volume);
+              // Also check Malam for notes if neither Pagi nor Siang had any
+              if (record.notes && record.notes.trim() !== '' && !entry.notes) {
+                entry.notes = record.notes;
+              }
             }
             cowEntries.set(record.cowId, entry);
           }
@@ -159,11 +171,22 @@ export function DailyMilkingForm({ onSaveComplete }: DailyMilkingFormProps) {
         cowRecords.forEach((record: MilkingRecord) => {
           if (record.session === 'Pagi') {
             session1 = String(record.volume);
-            notes = record.notes || '';
+            // Load notes from Pagi session (primary session for notes)
+            if (record.notes && record.notes.trim() !== '') {
+              notes = record.notes;
+            }
           } else if (record.session === 'Siang') {
             session2 = String(record.volume);
+            // Also check Siang for notes if Pagi didn't have any
+            if (record.notes && record.notes.trim() !== '' && !notes) {
+              notes = record.notes;
+            }
           } else if (record.session === 'Malam') {
             session3 = String(record.volume);
+            // Also check Malam for notes if neither Pagi nor Siang had any
+            if (record.notes && record.notes.trim() !== '' && !notes) {
+              notes = record.notes;
+            }
           }
         });
 
@@ -217,7 +240,8 @@ export function DailyMilkingForm({ onSaveComplete }: DailyMilkingFormProps) {
         SESSIONS.forEach((session, index) => {
           const volume = index === 0 ? entry.session1 : index === 1 ? entry.session2 : entry.session3;
 
-          if (volume && parseFloat(volume) > 0) {
+          // Save record if there's volume OR notes
+          if ((volume && parseFloat(volume) > 0) || (entry.notes && entry.notes.trim() !== '')) {
             // Check if record already exists for this cow/date/session
             const existingRecord = existingRecords.find(
               (r: MilkingRecord) => r.cowId === entry.cowId && r.session === session
@@ -228,7 +252,7 @@ export function DailyMilkingForm({ onSaveComplete }: DailyMilkingFormProps) {
               cowName: entry.cowName,
               date: selectedDate,
               session: session,
-              volume: parseFloat(volume),
+              volume: volume ? parseFloat(volume) : 0,
               fat: 0,
               protein: 0,
               notes: entry.notes || null, // Always include notes for all sessions
@@ -282,7 +306,12 @@ export function DailyMilkingForm({ onSaveComplete }: DailyMilkingFormProps) {
         body: JSON.stringify(envData),
       });
 
-      // Refresh data
+      // Refresh context data if callback provided
+      if (onRefresh) {
+        onRefresh();
+      }
+      
+      // Show toast
       if (onSaveComplete) {
         onSaveComplete();
       }

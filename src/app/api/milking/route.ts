@@ -18,8 +18,13 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { id, cowId, cowName, date, session, volume, fat, protein, lactose, totalSolids, notes } = body;
 
-    if (!cowId || !volume) {
-      return NextResponse.json({ error: 'Cow ID and volume are required' }, { status: 400 });
+    if (!cowId) {
+      return NextResponse.json({ error: 'Cow ID is required' }, { status: 400 });
+    }
+
+    // Volume is required, but can be 0 (e.g., for notes-only records)
+    if (volume === undefined || volume === null) {
+      return NextResponse.json({ error: 'Volume is required' }, { status: 400 });
     }
 
     const newRecord = {
@@ -52,6 +57,11 @@ export async function PUT(request: Request) {
 
     if (!id) {
       return NextResponse.json({ error: 'Record ID is required' }, { status: 400 });
+    }
+
+    // Volume is required, but can be 0 (e.g., for notes-only records)
+    if (volume === undefined || volume === null) {
+      return NextResponse.json({ error: 'Volume is required' }, { status: 400 });
     }
 
     const updatedRecord = {

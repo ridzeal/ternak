@@ -102,6 +102,7 @@ export interface FarmContextType extends FarmState {
   addEvent: (event: Omit<FarmEvent, 'id'>) => void;
   updateEvent: (event: FarmEvent) => void;
   deleteEvent: (id: string) => void;
+  refreshData: () => Promise<void>;
   stats: {
     totalHerd: number;
     femaleCount: number;
