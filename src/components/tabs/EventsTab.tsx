@@ -26,84 +26,92 @@ export function EventsTab({ onAddEvent, onEditEvent, onDeleteEvent }: EventsTabP
         <Button onClick={onAddEvent}>+ Catat Kegiatan</Button>
       </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-        {events.map(ev => {
+      {/* Desktop Table */}
+      <div className="mobile-hide" style={{
+        background: '#faf6ee',
+        borderRadius: 14,
+        border: '1px solid #e0d4c0',
+        overflow: 'hidden'
+      }}>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: '44px 1fr 120px 100px 1fr 1fr 80px',
+          gap: 14,
+          padding: '18px 20px',
+          borderBottom: '1.5px solid #e8e0d4'
+        }}>
+          {['', 'Sapi', 'Jenis', 'Tanggal', 'Tindak Lanjut', 'Catatan', 'Aksi'].map((h, i) => (
+            <div key={i} className="table-header">{h}</div>
+          ))}
+        </div>
+        {events.map((ev, i) => {
           const followUp = ev.followUp && ev.followUp !== '-' && ev.followUp < todayStr();
           const overdue = followUp;
 
           return (
             <div
               key={ev.id}
-              className="event-card"
+              className="row table-padding"
               style={{
-                background: '#faf6ee',
-                borderRadius: 14,
-                border: '1px solid #e0d4c0',
-                borderLeft: overdue ? '4px solid #c0392b' : '4px solid #e0d4c0',
-                padding: '22px 20px',
                 display: 'grid',
-                gridTemplateColumns: '42px 1fr auto auto',
+                gridTemplateColumns: '44px 1fr 120px 100px 1fr 1fr 80px',
                 gap: 14,
-                alignItems: 'flex-start'
+                alignItems: 'center',
+                borderBottom: i < events.length - 1 ? '1px solid #ede7dc' : 'none'
               }}
             >
-              <div className="event-icon" style={{
-                width: 38,
-                height: 38,
+              <div style={{
+                width: 36,
+                height: 36,
                 borderRadius: 10,
                 background: '#f0e4d0',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                border: '1.5px solid #e0d0b8',
-                flexShrink: 0
+                fontSize: 28,
+                border: '1.5px solid #e0d0b8'
               }}>
                 {eventIcon[ev.type] || '📋'}
               </div>
-              <div style={{ minWidth: 0 }}>
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 8,
-                  flexWrap: 'wrap',
-                  marginBottom: 5
-                }}>
-                  <span className="event-title">{ev.cowName}</span>
-                  <span className="event-type" style={{
-                    background: '#f0e4d0',
-                    color: '#7a5a3a',
-                    border: '1px solid #e0d0b8',
-                    padding: '5px 16px',
-                    borderRadius: 100,
-                    fontFamily: 'monospace'
-                  }}>
-                    {ev.type}
-                  </span>
-                  <span className="event-date">{ev.date}</span>
+              <div>
+                <div className="table-cell-bold">{ev.cowName}</div>
+                <div style={{ fontFamily: 'monospace', fontSize: 'var(--fs-md)', color: '#8a7d6b', marginTop: 2 }}>
+                  {ev.id}
                 </div>
-                <div className="event-desc">{ev.description}</div>
-                {ev.vet !== '-' && (
-                  <div className="event-vet">👨‍⚕️ {ev.vet}</div>
-                )}
               </div>
-              <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                {ev.followUp && ev.followUp !== '-' && (
+              <div>
+                <span className="event-type" style={{
+                  background: '#f0e4d0',
+                  color: '#7a5a3a',
+                  border: '1px solid #e0d0b8',
+                  padding: '5px 16px',
+                  borderRadius: 100,
+                  fontFamily: 'monospace',
+                  fontSize: 'var(--fs-sm)'
+                }}>
+                  {ev.type}
+                </span>
+              </div>
+              <div className="table-cell">{ev.date}</div>
+              <div>
+                {ev.followUp && ev.followUp !== '-' ? (
                   <div className="event-followup" style={{
                     padding: '7px 16px',
                     borderRadius: 8,
                     fontFamily: 'monospace',
                     background: overdue ? '#fdecea' : '#f0e8da',
                     color: overdue ? '#c0392b' : '#8a7d6b',
-                    border: `1px solid ${overdue ? '#f1a1a1' : '#e0d4c0'}`
+                    border: `1px solid ${overdue ? '#f1a1a1' : '#e0d4c0'}`,
+                    fontSize: 'var(--fs-sm)'
                   }}>
-                    {overdue ? '⚠️ ' : '📅 '}Tindak lanjut: {ev.followUp}
+                    {overdue ? '⚠️ ' : '📅 '}{ev.followUp}
                   </div>
+                ) : (
+                  <span className="table-cell" style={{ color: '#a0a0a0' }}>—</span>
                 )}
-                <div style={{ fontFamily: 'monospace', fontSize: 'var(--fs-md)', color: '#c0b0a0', marginTop: 4 }}>
-                  {ev.id}
-                </div>
               </div>
-              <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
+              <div className="table-cell" style={{ fontStyle: 'italic' }}>{ev.description}</div>
+              <div style={{ display: 'flex', gap: 6 }}>
                 <Button
                   variant="secondary"
                   onClick={() => onEditEvent(ev)}
@@ -124,9 +132,9 @@ export function EventsTab({ onAddEvent, onEditEvent, onDeleteEvent }: EventsTabP
         })}
       </div>
 
-      {/* Mobile Card View - Simplified */}
+      {/* Mobile Card View */}
       <div className="mobile-card" style={{ display: 'none', width: '100%', overflowX: 'hidden' }}>
-        {events.map(ev => {
+        {events.map((ev) => {
           const followUp = ev.followUp && ev.followUp !== '-' && ev.followUp < todayStr();
           const overdue = followUp;
 
@@ -134,9 +142,6 @@ export function EventsTab({ onAddEvent, onEditEvent, onDeleteEvent }: EventsTabP
             <div
               key={ev.id}
               className="mobile-card-item"
-              style={{
-                borderLeft: overdue ? '4px solid #c0392b' : '4px solid #e0d4c0',
-              }}
             >
               {/* Header with icon and title */}
               <div className="mobile-card-header">
@@ -145,12 +150,12 @@ export function EventsTab({ onAddEvent, onEditEvent, onDeleteEvent }: EventsTabP
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div className="mobile-card-title" style={{ wordBreak: 'break-word' }}>{ev.cowName}</div>
-                  <div className="mobile-card-subtitle">{ev.date}</div>
+                  <div className="mobile-card-subtitle">{ev.id}</div>
                 </div>
               </div>
 
               {/* Type badge */}
-              <div style={{
+              <span className="event-type" style={{
                 background: '#f0e4d0',
                 color: '#7a5a3a',
                 border: '1px solid #e0d0b8',
@@ -159,29 +164,49 @@ export function EventsTab({ onAddEvent, onEditEvent, onDeleteEvent }: EventsTabP
                 fontFamily: 'monospace',
                 fontSize: 'var(--fs-xs)',
                 display: 'inline-block',
-                marginBottom: 10,
-                maxWidth: '100%',
-                wordBreak: 'break-word'
+                marginBottom: 10
               }}>
                 {ev.type}
+              </span>
+
+              {/* Info content */}
+              <div style={{ marginTop: 10 }}>
+                <div style={{ fontSize: 'var(--fs-md)', color: '#3a2e20', marginBottom: 8 }}>
+                  <span style={{ fontSize: 'var(--fs-xs)', color: '#8a7d6b', textTransform: 'uppercase', letterSpacing: '0.1em', marginRight: 6 }}>TANGGAL</span>
+                  {ev.date}
+                </div>
+                <div style={{ fontSize: 'var(--fs-md)', color: '#3a2e20', marginBottom: 8 }}>
+                  <span style={{ fontSize: 'var(--fs-xs)', color: '#8a7d6b', textTransform: 'uppercase', letterSpacing: '0.1em', marginRight: 6 }}>TINDAK LANJUT</span>
+                  {ev.followUp && ev.followUp !== '-' ? (
+                    <span style={{
+                      fontWeight: overdue ? 600 : 400,
+                      color: overdue ? '#c0392b' : '#5a4a3a'
+                    }}>
+                      {overdue ? '⚠️ ' : '📅 '}{ev.followUp}
+                    </span>
+                  ) : (
+                    <span style={{ color: '#a0a0a0' }}>—</span>
+                  )}
+                </div>
               </div>
 
               {/* Description */}
-              <div style={{ 
-                fontSize: 'var(--fs-md)', 
-                color: '#3a2e20', 
-                marginBottom: 10, 
+              <div style={{
+                fontSize: 'var(--fs-md)',
+                color: '#3a2e20',
+                marginBottom: 10,
                 wordBreak: 'break-word',
-                lineHeight: 1.4
+                lineHeight: 1.4,
+                fontStyle: 'italic'
               }}>
                 {ev.description}
               </div>
 
               {/* Vet info */}
               {ev.vet !== '-' && (
-                <div style={{ 
-                  fontSize: 'var(--fs-sm)', 
-                  color: '#8a7d6b', 
+                <div style={{
+                  fontSize: 'var(--fs-sm)',
+                  color: '#8a7d6b',
                   marginBottom: 10,
                   padding: '8px 12px',
                   background: '#f5f0e8',
@@ -192,26 +217,8 @@ export function EventsTab({ onAddEvent, onEditEvent, onDeleteEvent }: EventsTabP
                 </div>
               )}
 
-              {/* Follow-up info */}
-              {ev.followUp && ev.followUp !== '-' && (
-                <div style={{
-                  padding: '8px 12px',
-                  borderRadius: 8,
-                  fontFamily: 'monospace',
-                  background: overdue ? '#fdecea' : '#f0e8da',
-                  color: overdue ? '#c0392b' : '#5a4a3a',
-                  border: `1px solid ${overdue ? '#f1a1a1' : '#e0d4c0'}`,
-                  fontSize: 'var(--fs-sm)',
-                  marginBottom: 12,
-                  wordBreak: 'break-word',
-                  fontWeight: overdue ? 600 : 400,
-                }}>
-                  {overdue ? '⚠️ ' : '📅 '}Tindak lanjut: {ev.followUp}
-                </div>
-              )}
-
               {/* Action buttons */}
-              <div className="mobile-card-actions">
+              <div className="mobile-card-actions" style={{ marginTop: 12 }}>
                 <Button
                   variant="secondary"
                   onClick={() => onEditEvent(ev)}

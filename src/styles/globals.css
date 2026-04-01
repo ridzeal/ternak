@@ -158,6 +158,17 @@ input:focus, select:focus, textarea:focus {
   }
 }
 
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 .fade {
   animation: fadeUp 0.35s ease both;
 }
@@ -180,6 +191,30 @@ input:focus, select:focus, textarea:focus {
   border-radius: 2px;
 }
 
+/* Desktop Side Navigation Styles */
+.desktop-sidenav {
+  display: flex;
+}
+
+.sidenav-item:hover {
+  background: rgba(245, 240, 232, 0.05) !important;
+}
+
+.sidenav-item.active {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Main content wrapper for desktop with sidebar */
+.main-with-sidenav {
+  margin-left: 260px;
+  min-height: 100vh;
+}
+
+/* Hide mobile header on desktop */
+.mobile-header {
+  display: none !important;
+}
+
 /* Mobile Responsive */
 @media (max-width: 768px) {
   /* Reduce font sizes on mobile */
@@ -192,6 +227,21 @@ input:focus, select:focus, textarea:focus {
     --fs-2xl: 20px;
     --fs-3xl: 24px;
     --fs-4xl: 28px;
+  }
+
+  /* Show mobile header on mobile */
+  .mobile-header {
+    display: flex !important;
+  }
+
+  /* Hide desktop side nav on mobile */
+  .desktop-sidenav {
+    display: none !important;
+  }
+
+  /* Remove left margin on mobile and adjust for mobile header */
+  .main-with-sidenav {
+    margin-left: 0 !important;
   }
 
   /* Navigation - mobile layout */

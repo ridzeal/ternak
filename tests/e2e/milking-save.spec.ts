@@ -9,7 +9,7 @@ test.describe('Daily Milking Entry - Save Functionality', () => {
       await page.fill('input[type="email"]', 'admin@farm.local');
       await page.fill('input[type="password"]', 'admin123');
       await page.click('button[type="submit"]');
-      await page.waitForURL('**/', { timeout: 10000 });
+      await page.waitForURL('**/in**', { timeout: 10000 });
       await page.waitForTimeout(2000);
     }
   };

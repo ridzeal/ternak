@@ -1,0 +1,572 @@
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import { useFarm } from '@/context/FarmContext';
+import { useAuth } from '@/context/AuthContext';
+import { useRouter } from 'next/navigation';
+import { SideNav } from '@/components/SideNav';
+import { StatsSection } from '@/components/StatsSection';
+import { HerdTab, MilkingTab, EventsTab } from '@/components/tabs';
+import { Modal } from '@/components/Modal';
+import { Toast } from '@/components/Toast';
+import { Button } from '@/components/Button';
+import { AddCowForm, AddMilkingForm, AddEventForm, DailyMilkingForm } from '@/components/forms';
+import { DailyMilkReport } from '@/components/reports/DailyMilkReport';
+import { UserManagement } from '@/components/UserManagement';
+import { todayStr } from '@/lib/utils';
+import { BREEDS, STATUSES, SESSIONS, ETYPES, Cow, MilkingRecord, FarmEvent } from '@/types';
+
+interface CowFormData {
+  name: string;
+  breed: string;
+  gender: 'Betina' | 'Jantan';
+  dob: string;
+  weight: string;
+  status: string;
+  tag: string;
+  sire: string;
+  dam: string;
+  length: string;
+  chestCircumference: string;
+  reproductiveNotes: string;
+}
+
+interface MilkingFormData {
+  cowId: string;
+  date: string;
+  session: string;
+  volume: string;
+  fat: string;
+  protein: string;
+  lactose: string;
+  totalSolids: string;
+  notes: string;
+}
+
+interface EventFormData {
+  cowId: string;
+  date: string;
+  type: string;
+  description: string;
+  vet: string;
+  followUp: string;
+}
+
+const TABS = [
+  { key: 'herd', label: 'Ternak', icon: '🐄', count: 0 },
+  { key: 'milking', label: 'Pemerahan', icon: '🥛', count: 0 },
+  { key: 'daily', label: 'Input Harian', icon: '📝', count: 0 },
+  { key: 'reports', label: 'Laporan', icon: '📊', count: 0 },
+  { key: 'events', label: 'Kegiatan', icon: '📋', count: 0 },
+];
+
+interface InPageProps {
+  params: { tab: string };
+}
+
+export default function InPage({ params }: InPageProps) {
+  const { user, loading } = useAuth();
+  const router = useRouter();
+  const [activeTab, setActiveTab] = useState(params.tab || 'herd');
+
+  // Sync active tab with URL params
+  useEffect(() => {
+    if (TABS.some(t => t.key === params.tab)) {
+      setActiveTab(params.tab);
+    }
+  }, [params.tab]);
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/login');
+    }
+  }, [user, loading, router]);
+
+  const [modalOpen, setModalOpen] = useState<string | null>(null);
+  const [toast, setToast] = useState<string | null>(null);
+  const [editingCow, setEditingCow] = useState<Cow | null>(null);
+  const [editingMilking, setEditingMilking] = useState<MilkingRecord | null>(null);
+  const [editingEvent, setEditingEvent] = useState<FarmEvent | null>(null);
+  const [deleteConfirm, setDeleteConfirm] = useState<{ type: string; id: string; name: string } | null>(null);
+  const [showUserManagement, setShowUserManagement] = useState(false);
+
+  const { cows, milking, events, addCow, updateCow, deleteCow, addMilking, updateMilking, deleteMilking, addEvent, updateEvent, deleteEvent } = useFarm();
+
+  // Form states
+  const [cowForm, setCowForm] = useState<CowFormData>({
+    name: '',
+    breed: BREEDS[0],
+    gender: 'Betina',
+    dob: '',
+    weight: '',
+    status: STATUSES[0],
+    tag: '',
+    sire: '',
+    dam: '',
+    length: '',
+    chestCircumference: '',
+    reproductiveNotes: '',
+  });
+
+  const [milkingForm, setMilkingForm] = useState<MilkingFormData>({
+    cowId: '',
+    date: todayStr(),
+    session: SESSIONS[0],
+    volume: '',
+    fat: '',
+    protein: '',
+    lactose: '',
+    totalSolids: '',
+    notes: '',
+  });
+
+  const [eventForm, setEventForm] = useState<EventFormData>({
+    cowId: '',
+    date: todayStr(),
+    type: ETYPES[0],
+    description: '',
+    vet: '',
+    followUp: '',
+  });
+
+  const flash = (message: string) => {
+    setToast(message);
+  };
+
+  const resetCowForm = () => {
+    setCowForm({
+      name: '',
+      breed: BREEDS[0],
+      gender: 'Betina',
+      dob: '',
+      weight: '',
+      status: STATUSES[0],
+      tag: '',
+      sire: '',
+      dam: '',
+      length: '',
+      chestCircumference: '',
+      reproductiveNotes: '',
+    });
+  };
+
+  const resetMilkingForm = () => {
+    setMilkingForm({
+      cowId: '',
+      date: todayStr(),
+      session: SESSIONS[0],
+      volume: '',
+      fat: '',
+      protein: '',
+      lactose: '',
+      totalSolids: '',
+      notes: '',
+    });
+  };
+
+  const resetEventForm = () => {
+    setEventForm({
+      cowId: '',
+      date: todayStr(),
+      type: ETYPES[0],
+      description: '',
+      vet: '',
+      followUp: '',
+    });
+  };
+
+  const handleTabChange = (tab: string) => {
+    router.push(`/in/${tab}`);
+  };
+
+  const handleAddCow = () => {
+    if (!cowForm.name || !cowForm.tag || !cowForm.dob) {
+      flash('⚠ Nama, nomor telinga, dan tanggal lahir harus diisi');
+      return;
+    }
+    if (editingCow) {
+      updateCow({
+        ...editingCow,
+        name: cowForm.name,
+        breed: cowForm.breed,
+        gender: cowForm.gender,
+        dob: cowForm.dob,
+        weight: +cowForm.weight || 0,
+        status: cowForm.status as Cow['status'],
+        tag: cowForm.tag,
+        sire: cowForm.sire,
+        dam: cowForm.dam,
+        length: cowForm.length ? +cowForm.length : undefined,
+        chestCircumference: cowForm.chestCircumference ? +cowForm.chestCircumference : undefined,
+        reproductiveNotes: cowForm.reproductiveNotes || undefined,
+      });
+      flash('Data sapi berhasil diperbarui ✓');
+    } else {
+      addCow({
+        name: cowForm.name,
+        breed: cowForm.breed,
+        gender: cowForm.gender,
+        dob: cowForm.dob,
+        weight: +cowForm.weight || 0,
+        status: cowForm.status as Cow['status'],
+        tag: cowForm.tag,
+        sire: cowForm.sire,
+        dam: cowForm.dam,
+        length: cowForm.length ? +cowForm.length : undefined,
+        chestCircumference: cowForm.chestCircumference ? +cowForm.chestCircumference : undefined,
+        reproductiveNotes: cowForm.reproductiveNotes || undefined,
+      });
+      flash('Sapi berhasil didaftarkan ✓');
+    }
+    resetCowForm();
+    setModalOpen(null);
+    setEditingCow(null);
+  };
+
+  const handleAddMilking = () => {
+    if (!milkingForm.cowId || !milkingForm.volume) {
+      flash('⚠ Pilih sapi dan masukkan volume susu');
+      return;
+    }
+    const cow = cows.find((c) => c.id === milkingForm.cowId);
+    if (editingMilking) {
+      updateMilking({
+        ...editingMilking,
+        cowId: milkingForm.cowId,
+        cowName: cow?.name || editingMilking.cowName,
+        date: milkingForm.date,
+        session: milkingForm.session as MilkingRecord['session'],
+        volume: +milkingForm.volume,
+        fat: +milkingForm.fat || 0,
+        protein: +milkingForm.protein || 0,
+        lactose: milkingForm.lactose ? +milkingForm.lactose : undefined,
+        totalSolids: milkingForm.totalSolids ? +milkingForm.totalSolids : undefined,
+        notes: milkingForm.notes,
+      });
+      flash('Data pemerahan berhasil diperbarui ✓');
+    } else {
+      addMilking({
+        cowId: milkingForm.cowId,
+        cowName: cow?.name || '',
+        date: milkingForm.date,
+        session: milkingForm.session as MilkingRecord['session'],
+        volume: +milkingForm.volume,
+        fat: +milkingForm.fat || 0,
+        protein: +milkingForm.protein || 0,
+        lactose: milkingForm.lactose ? +milkingForm.lactose : undefined,
+        totalSolids: milkingForm.totalSolids ? +milkingForm.totalSolids : undefined,
+        notes: milkingForm.notes,
+      });
+      flash('Data pemerahan berhasil disimpan ✓');
+    }
+    resetMilkingForm();
+    setModalOpen(null);
+    setEditingMilking(null);
+  };
+
+  const handleAddEvent = () => {
+    if (!eventForm.cowId || !eventForm.description) {
+      flash('⚠ Pilih sapi dan tambahkan deskripsi');
+      return;
+    }
+    const cow = cows.find((c) => c.id === eventForm.cowId);
+    if (editingEvent) {
+      updateEvent({
+        ...editingEvent,
+        ...eventForm,
+        cowName: cow?.name || editingEvent.cowName,
+        type: eventForm.type as FarmEvent['type'],
+      });
+      flash('Kegiatan berhasil diperbarui ✓');
+    } else {
+      addEvent({
+        ...eventForm,
+        cowName: cow?.name || '',
+        type: eventForm.type as FarmEvent['type'],
+      });
+      flash('Kegiatan berhasil dicatat ✓');
+    }
+    resetEventForm();
+    setModalOpen(null);
+    setEditingEvent(null);
+  };
+
+  const openEditCow = (cow: Cow) => {
+    setEditingCow(cow);
+    setCowForm({
+      name: cow.name,
+      breed: cow.breed,
+      gender: cow.gender,
+      dob: cow.dob,
+      weight: String(cow.weight),
+      status: cow.status,
+      tag: cow.tag,
+      sire: cow.sire || '',
+      dam: cow.dam || '',
+      length: String(cow.length || ''),
+      chestCircumference: String(cow.chestCircumference || ''),
+      reproductiveNotes: cow.reproductiveNotes || '',
+    });
+    setModalOpen('cow-edit');
+  };
+
+  const openEditMilking = (record: MilkingRecord) => {
+    setEditingMilking(record);
+    setMilkingForm({
+      cowId: record.cowId,
+      date: record.date,
+      session: record.session,
+      volume: String(record.volume),
+      fat: String(record.fat),
+      protein: String(record.protein),
+      lactose: String(record.lactose || ''),
+      totalSolids: String(record.totalSolids || ''),
+      notes: record.notes || '',
+    });
+    setModalOpen('milk-edit');
+  };
+
+  const openEditEvent = (event: FarmEvent) => {
+    setEditingEvent(event);
+    setEventForm({
+      cowId: event.cowId,
+      date: event.date,
+      type: event.type,
+      description: event.description,
+      vet: event.vet,
+      followUp: event.followUp,
+    });
+    setModalOpen('event-edit');
+  };
+
+  const handleDeleteCow = (cow: Cow) => {
+    setDeleteConfirm({ type: 'cow', id: cow.id, name: cow.name });
+  };
+
+  const handleDeleteMilking = (id: string) => {
+    const record = milking.find(r => r.id === id);
+    setDeleteConfirm({ type: 'milking', id, name: `Milking ${record?.cowName || ''}` });
+  };
+
+  const handleDeleteEvent = (id: string) => {
+    const event = events.find(e => e.id === id);
+    setDeleteConfirm({ type: 'event', id, name: `${event?.type || ''} - ${event?.cowName || ''}` });
+  };
+
+  const confirmDelete = () => {
+    if (!deleteConfirm) return;
+    if (deleteConfirm.type === 'cow') {
+      deleteCow(deleteConfirm.id);
+      flash('Sapi berhasil dihapus ✓');
+    } else if (deleteConfirm.type === 'milking') {
+      deleteMilking(deleteConfirm.id);
+      flash('Data pemerahan berhasil dihapus ✓');
+    } else if (deleteConfirm.type === 'event') {
+      deleteEvent(deleteConfirm.id);
+      flash('Kegiatan berhasil dihapus ✓');
+    }
+    setDeleteConfirm(null);
+  };
+
+  const tabsWithCount = TABS.map((tab) => ({
+    ...tab,
+    count: tab.key === 'herd' ? cows.length : tab.key === 'milking' ? milking.length : events.length,
+  }));
+
+  const femaleCows = cows.filter((c) => c.gender === 'Betina');
+
+  // Show loading while checking auth
+  if (loading) {
+    return (
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        minHeight: '100vh',
+        background: '#f0ead8'
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: '48px', marginBottom: '16px' }}>🐄</div>
+          <div style={{ color: '#8a7d6b', fontFamily: 'monospace' }}>Loading...</div>
+        </div>
+      </div>
+    );
+  }
+
+  // Don't render if not authenticated (redirecting)
+  if (!user) {
+    return null;
+  }
+
+  return (
+    <>
+      <SideNav
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
+        tabs={tabsWithCount}
+        onOpenUsers={() => setShowUserManagement(true)}
+      />
+
+      <main className="main-with-sidenav page-container" style={{ maxWidth: 1060, margin: '0 auto', padding: '28px 28px', width: '100%', overflowX: 'hidden', background: '#f0ead8' }}>
+        <StatsSection />
+
+        {activeTab === 'herd' && (
+          <HerdTab
+            onAddCow={() => { setEditingCow(null); resetCowForm(); setModalOpen('cow'); }}
+            onEditCow={openEditCow}
+            onDeleteCow={handleDeleteCow}
+          />
+        )}
+        {activeTab === 'milking' && (
+          <MilkingTab
+            onAddMilking={() => { setEditingMilking(null); resetMilkingForm(); setModalOpen('milk'); }}
+            onEditMilking={openEditMilking}
+            onDeleteMilking={handleDeleteMilking}
+          />
+        )}
+        {activeTab === 'daily' && (
+          <DailyMilkingForm onSaveComplete={() => {
+            flash('Data harian berhasil disimpan ✓');
+          }} />
+        )}
+        {activeTab === 'reports' && (
+          <DailyMilkReport />
+        )}
+        {activeTab === 'events' && (
+          <EventsTab
+            onAddEvent={() => { setEditingEvent(null); resetEventForm(); setModalOpen('event'); }}
+            onEditEvent={openEditEvent}
+            onDeleteEvent={handleDeleteEvent}
+          />
+        )}
+      </main>
+
+      {/* Cow Modal - Add */}
+      <Modal
+        isOpen={modalOpen === 'cow'}
+        onClose={() => { setModalOpen(null); setEditingCow(null); resetCowForm(); }}
+        title="🐄 Daftarkan Sapi Baru"
+        subtitle="Tambahkan hewan ke registri ternak"
+      >
+        <AddCowForm
+          formData={cowForm}
+          onChange={setCowForm}
+          onSubmit={handleAddCow}
+          onCancel={() => { setModalOpen(null); setEditingCow(null); resetCowForm(); }}
+          initialData={null}
+        />
+      </Modal>
+
+      {/* Cow Modal - Edit */}
+      <Modal
+        isOpen={modalOpen === 'cow-edit'}
+        onClose={() => { setModalOpen(null); setEditingCow(null); resetCowForm(); }}
+        title="🐄 Edit Data Sapi"
+        subtitle="Perbarui informasi ternak"
+      >
+        <AddCowForm
+          formData={cowForm}
+          onChange={setCowForm}
+          onSubmit={handleAddCow}
+          onCancel={() => { setModalOpen(null); setEditingCow(null); resetCowForm(); }}
+          initialData={editingCow}
+        />
+      </Modal>
+
+      {/* Milking Modal - Add */}
+      <Modal
+        isOpen={modalOpen === 'milk'}
+        onClose={() => { setModalOpen(null); setEditingMilking(null); resetMilkingForm(); }}
+        title="🥛 Catat Session Pemerahan"
+        subtitle="Rekam data produksi susu"
+      >
+        <AddMilkingForm
+          formData={milkingForm}
+          onChange={setMilkingForm}
+          onSubmit={handleAddMilking}
+          onCancel={() => { setModalOpen(null); setEditingMilking(null); resetMilkingForm(); }}
+          femaleCows={femaleCows}
+          initialData={null}
+        />
+      </Modal>
+
+      {/* Milking Modal - Edit */}
+      <Modal
+        isOpen={modalOpen === 'milk-edit'}
+        onClose={() => { setModalOpen(null); setEditingMilking(null); resetMilkingForm(); }}
+        title="🥛 Edit Data Pemerahan"
+        subtitle="Perbarui catatan pemerahan"
+      >
+        <AddMilkingForm
+          formData={milkingForm}
+          onChange={setMilkingForm}
+          onSubmit={handleAddMilking}
+          onCancel={() => { setModalOpen(null); setEditingMilking(null); resetMilkingForm(); }}
+          femaleCows={femaleCows}
+          initialData={editingMilking}
+        />
+      </Modal>
+
+      {/* Event Modal - Add */}
+      <Modal
+        isOpen={modalOpen === 'event'}
+        onClose={() => { setModalOpen(null); setEditingEvent(null); resetEventForm(); }}
+        title="📋 Catat Kegiatan Peternakan"
+        subtitle="Rekam kegiatan kesehatan atau peternakan"
+      >
+        <AddEventForm
+          formData={eventForm}
+          onChange={setEventForm}
+          onSubmit={handleAddEvent}
+          onCancel={() => { setModalOpen(null); setEditingEvent(null); resetEventForm(); }}
+          cows={cows}
+          initialData={null}
+        />
+      </Modal>
+
+      {/* Event Modal - Edit */}
+      <Modal
+        isOpen={modalOpen === 'event-edit'}
+        onClose={() => { setModalOpen(null); setEditingEvent(null); resetEventForm(); }}
+        title="📋 Edit Kegiatan Peternakan"
+        subtitle="Perbarui catatan kegiatan"
+      >
+        <AddEventForm
+          formData={eventForm}
+          onChange={setEventForm}
+          onSubmit={handleAddEvent}
+          onCancel={() => { setModalOpen(null); setEditingEvent(null); resetEventForm(); }}
+          cows={cows}
+          initialData={editingEvent}
+        />
+      </Modal>
+
+      {/* Delete Confirmation Modal */}
+      <Modal
+        isOpen={!!deleteConfirm}
+        onClose={() => setDeleteConfirm(null)}
+        title="⚠️ Konfirmasi Hapus"
+        subtitle="Tindakan ini tidak dapat dibatalkan"
+      >
+        <div style={{ padding: '20px 0' }}>
+          <p style={{ fontSize: 'var(--fs-lg)', color: '#3a2e20', marginBottom: 20 }}>
+            Apakah Anda yakin ingin menghapus <strong>{deleteConfirm?.name}</strong>?
+          </p>
+          <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
+            <Button variant="secondary" onClick={() => setDeleteConfirm(null)}>Batal</Button>
+            <Button onClick={confirmDelete} style={{ background: '#c0392b' }}>Ya, Hapus</Button>
+          </div>
+        </div>
+      </Modal>
+
+      <Toast message={toast} onClose={() => setToast(null)} />
+
+      {/* User Management Modal - Admin Only */}
+      <UserManagement
+        isOpen={showUserManagement}
+        onClose={() => setShowUserManagement(false)}
+      />
+    </>
+  );
+}

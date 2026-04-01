@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
 
 export function LoginForm() {
   const [email, setEmail] = useState('');
@@ -9,6 +10,7 @@ export function LoginForm() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { refreshUser } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,8 +32,11 @@ export function LoginForm() {
         return;
       }
 
-      // Navigate to home - cookie will be sent with next request
-      router.push('/');
+      // Refresh auth context to load user data
+      await refreshUser();
+      
+      // Navigate to dashboard
+      router.push('/in/');
     } catch (err) {
       setError('Network error. Please try again.');
     } finally {
