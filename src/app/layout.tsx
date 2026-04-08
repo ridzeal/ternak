@@ -6,6 +6,9 @@ import '@/styles/globals.css';
 export const metadata: Metadata = {
   title: 'Ranch OS - Cattle Farm Manager',
   description: 'Manage your cattle farm with ease',
+  icons: {
+    icon: '/favicon.svg',
+  },
 };
 
 export default function RootLayout({

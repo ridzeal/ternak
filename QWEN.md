@@ -1,0 +1,2 @@
+## Qwen Added Memories
+- When using useEffect with setState, always include a proper dependency array. Never omit the dependency array if the effect calls setState, as it will cause an infinite loop by triggering re-renders continuously. If you need to sync URL params or external state, use empty dependency array [] for mount-only execution, or include specific stable dependencies. Always manually update state alongside router.push() or navigation calls rather than relying on useEffect to detect URL changes.

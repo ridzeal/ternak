@@ -25,10 +25,12 @@ interface AddCowFormProps {
   onChange: (data: CowFormData) => void;
   onSubmit: () => void;
   onCancel: () => void;
+  onDelete?: () => void;
   initialData?: Cow | null;
+  readOnly?: boolean;
 }
 
-export function AddCowForm({ formData, onChange, onSubmit, onCancel, initialData }: AddCowFormProps) {
+export function AddCowForm({ formData, onChange, onSubmit, onCancel, onDelete, initialData, readOnly = false }: AddCowFormProps) {
   const updateField = (field: keyof CowFormData, value: string) => {
     onChange({ ...formData, [field]: value });
   };
@@ -54,38 +56,49 @@ export function AddCowForm({ formData, onChange, onSubmit, onCancel, initialData
 
   const isEdit = !!initialData;
 
+  const readOnlyStyle = {
+    ...inputStyle,
+    background: '#f0e4d0',
+    cursor: 'not-allowed',
+    color: '#8a7d6b',
+  } as React.CSSProperties;
+
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
       <Field label="Nama *">
         <input
-          style={inputStyle}
+          style={readOnly ? readOnlyStyle : inputStyle}
           value={formData.name}
           onChange={e => updateField('name', e.target.value)}
           placeholder="mis. Mentari"
+          readOnly={readOnly}
         />
       </Field>
       <Field label="Nomor Ears Tag *">
         <input
-          style={inputStyle}
+          style={readOnly ? readOnlyStyle : inputStyle}
           value={formData.tag}
           onChange={e => updateField('tag', e.target.value)}
           placeholder="mis. FH-4821"
+          readOnly={readOnly}
         />
       </Field>
       <Field label="Jenis">
         <select
-          style={selectStyle}
+          style={readOnly ? readOnlyStyle : selectStyle}
           value={formData.breed}
           onChange={e => updateField('breed', e.target.value)}
+          disabled={readOnly}
         >
           {BREEDS.map(b => <option key={b}>{b}</option>)}
         </select>
       </Field>
       <Field label="Jenis Kelamin">
         <select
-          style={selectStyle}
+          style={readOnly ? readOnlyStyle : selectStyle}
           value={formData.gender}
           onChange={e => updateField('gender', e.target.value as 'Betina' | 'Jantan')}
+          disabled={readOnly}
         >
           <option>Betina</option>
           <option>Jantan</option>
@@ -93,75 +106,92 @@ export function AddCowForm({ formData, onChange, onSubmit, onCancel, initialData
       </Field>
       <Field label="Tanggal Lahir *">
         <input
-          style={inputStyle}
+          style={readOnly ? readOnlyStyle : inputStyle}
           type="date"
           value={formData.dob}
           onChange={e => updateField('dob', e.target.value)}
+          readOnly={readOnly}
         />
       </Field>
       <Field label="Berat (kg)">
         <input
-          style={inputStyle}
+          style={readOnly ? readOnlyStyle : inputStyle}
           type="number"
           value={formData.weight}
           onChange={e => updateField('weight', e.target.value)}
           placeholder="mis. 480"
+          readOnly={readOnly}
         />
       </Field>
       <Field label="Panjang Tubuh (cm)">
         <input
-          style={inputStyle}
+          style={readOnly ? readOnlyStyle : inputStyle}
           type="number"
           value={formData.length}
           onChange={e => updateField('length', e.target.value)}
           placeholder="mis. 120"
+          readOnly={readOnly}
         />
       </Field>
       <Field label="Lingkar Dada (cm)">
         <input
-          style={inputStyle}
+          style={readOnly ? readOnlyStyle : inputStyle}
           type="number"
           value={formData.chestCircumference}
           onChange={e => updateField('chestCircumference', e.target.value)}
           placeholder="mis. 180"
+          readOnly={readOnly}
         />
       </Field>
       <Field label="Status">
         <select
-          style={selectStyle}
+          style={readOnly ? readOnlyStyle : selectStyle}
           value={formData.status}
           onChange={e => updateField('status', e.target.value)}
+          disabled={readOnly}
         >
           {STATUSES.map(s => <option key={s}>{s}</option>)}
         </select>
       </Field>
       <Field label="Keterangan Reproduksi">
         <textarea
-          style={{ ...inputStyle, minHeight: 80, resize: 'vertical' }}
+          style={{ ...(readOnly ? readOnlyStyle : inputStyle), minHeight: 80, resize: 'vertical' }}
           value={formData.reproductiveNotes}
           onChange={e => updateField('reproductiveNotes', e.target.value)}
           placeholder="mis: M4, M5 dara, AB1, AB3 hamil, AB5 keguguran..."
+          readOnly={readOnly}
         />
       </Field>
       <Field label="Sire (Ayah)">
         <input
-          style={inputStyle}
+          style={readOnly ? readOnlyStyle : inputStyle}
           value={formData.sire}
           onChange={e => updateField('sire', e.target.value)}
           placeholder="ID atau nama pejantan"
+          readOnly={readOnly}
         />
       </Field>
       <Field label="Dam (Ibu)" col={2}>
         <input
-          style={inputStyle}
+          style={readOnly ? readOnlyStyle : inputStyle}
           value={formData.dam}
           onChange={e => updateField('dam', e.target.value)}
           placeholder="ID atau nama sapi betina"
+          readOnly={readOnly}
         />
       </Field>
       <div style={{ gridColumn: 'span 2', display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 6 }}>
-        <Button variant="secondary" onClick={onCancel}>Batal</Button>
-        <Button onClick={onSubmit}>{isEdit ? 'Simpan Perubahan' : 'Daftarkan Sapi'}</Button>
+        {isEdit && !readOnly && onDelete && (
+          <Button 
+            onClick={onDelete} 
+            style={{ background: '#c0392b', marginRight: 'auto' }}
+          >
+            🗑️ Hapus
+          </Button>
+        )}
+        {!readOnly && (
+          <Button onClick={onSubmit}>{isEdit ? 'Simpan Perubahan' : 'Daftarkan Sapi'}</Button>
+        )}
       </div>
     </div>
   );
