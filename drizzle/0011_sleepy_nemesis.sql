@@ -1,0 +1,20 @@
+CREATE TABLE "reproductive_events" (
+	"id" text PRIMARY KEY NOT NULL,
+	"cow_id" text NOT NULL,
+	"cow_name" text NOT NULL,
+	"event_type" text NOT NULL,
+	"event_date" text NOT NULL,
+	"expected_date" text,
+	"actual_date" text,
+	"semen_id" text,
+	"semen_source" text,
+	"technician" text,
+	"pregnancy_status" text,
+	"pregnancy_days" integer,
+	"calf_gender" text,
+	"calf_weight" numeric,
+	"calving_ease" text,
+	"status" text DEFAULT 'Active',
+	"notes" text,
+	"created_at" text NOT NULL
+);

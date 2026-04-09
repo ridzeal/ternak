@@ -178,6 +178,27 @@ export interface ForageHarvest {
   createdAt: string;
 }
 
+export interface ReproductiveEvent {
+  id: string;
+  cowId: string;
+  cowName: string;
+  eventType: 'Heat' | 'Insemination' | 'Pregnancy Check' | 'Pregnant' | 'Miscarriage' | 'Calving' | 'Edema';
+  eventDate: string;
+  expectedDate?: string;
+  actualDate?: string;
+  semenId?: string;
+  semenSource?: string;
+  technician?: string;
+  pregnancyStatus?: 'Open' | 'Pregnant' | 'Uncertain';
+  pregnancyDays?: number;
+  calfGender?: 'Male' | 'Female' | 'Twins';
+  calfWeight?: number;
+  calvingEase?: 'Easy' | 'Assisted' | 'Difficult';
+  status?: string;
+  notes?: string;
+  createdAt: string;
+}
+
 export interface FarmState {
   cows: Cow[];
   milking: MilkingRecord[];
@@ -217,3 +238,6 @@ export const MAINTENANCE_TYPES = ['Routine', 'Repair', 'Inspection', 'Replacemen
 export const CROP_TYPES = ['Pakchong', 'Red Napier', 'Telang', 'Millet', 'Mombassa', 'Other'] as const;
 export const PLOT_STATUSES = ['Growing', 'Ready', 'Harvested', 'Fallow', 'Other'] as const;
 export const HARVEST_QUALITY = ['Excellent', 'Good', 'Average', 'Poor'] as const;
+export const REPRODUCTIVE_EVENT_TYPES = ['Heat', 'Insemination', 'Pregnancy Check', 'Pregnant', 'Miscarriage', 'Calving', 'Edema'] as const;
+export const PREGNANCY_STATUSES = ['Open', 'Pregnant', 'Uncertain'] as const;
+export const CALVING_EASE = ['Easy', 'Assisted', 'Difficult'] as const;

@@ -88,7 +88,7 @@ This folder contains the detailed implementation plan to bridge the gap between 
 - [x] 4.3 Create Excel Export Functionality (CSV)
 - [x] 4.4 Create Report Dashboard
 - [x] 4.5 Add Print-Friendly Layouts
-- [ ] 4.6 Create Data Migration Tool from Excel
+- [x] 4.6 Create Data Migration Tool from Excel (CSV Import)
 
 📄 [View Phase 4 Details](./PHASE_4_REPORTING.md)
 
@@ -103,7 +103,7 @@ This folder contains the detailed implementation plan to bridge the gap between 
 - [x] 5.1 Add THI Monitoring and Alerts
 - [x] 5.2 Add Production Trend Analysis
 - [x] 5.3 Add Herd Performance Dashboard
-- [ ] 5.4 Add Reproductive Status Tracking
+- [x] 5.4 Add Reproductive Status Tracking
 - [x] 5.5 Create Executive Dashboard (via StatsSection)
 - [x] 5.6 Add Data Export API (CSV export)
 

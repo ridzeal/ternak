@@ -223,3 +223,46 @@ export const forageHarvests = pgTable('forage_harvests', {
   notes: text('notes'),
   createdAt: text('created_at').notNull(),
 });
+
+// Reproductive Status Tracking (Phase 5.4)
+export const reproductiveEvents = pgTable('reproductive_events', {
+  id: text('id').primaryKey(),
+  cowId: text('cow_id').notNull(),
+  cowName: text('cow_name').notNull(),
+
+  // Event type
+  eventType: text('event_type', {
+    enum: ['Heat', 'Insemination', 'Pregnancy Check', 'Pregnant', 'Miscarriage', 'Calving', 'Edema']
+  }).notNull(),
+
+  // Event details
+  eventDate: text('event_date').notNull(),
+  expectedDate: text('expected_date'),  // For due dates
+  actualDate: text('actual_date'),      // For actual calving
+
+  // Insemination details
+  semenId: text('semen_id'),            // Bull/sire identifier
+  semenSource: text('semen_source'),
+  technician: text('technician'),
+
+  // Pregnancy details
+  pregnancyStatus: text('pregnancy_status', {
+    enum: ['Open', 'Pregnant', 'Uncertain']
+  }),
+  pregnancyDays: integer('pregnancy_days'),
+
+  // Calving details
+  calfGender: text('calf_gender', {
+    enum: ['Male', 'Female', 'Twins']
+  }),
+  calfWeight: decimal('calf_weight'),
+  calvingEase: text('calving_ease', {
+    enum: ['Easy', 'Assisted', 'Difficult']
+  }),
+
+  // Status tracking (dara, hamil, keguguran, edema, melahirkan)
+  status: text('status').default('Active'),
+  notes: text('notes'),
+
+  createdAt: text('created_at').notNull(),
+});

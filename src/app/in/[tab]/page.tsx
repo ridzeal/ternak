@@ -12,12 +12,13 @@ import { Toast } from '@/components/Toast';
 import { Button } from '@/components/Button';
 import { AddCowForm, AddMilkingForm, AddEventForm, DailyMilkingForm, MilkCollectionForm } from '@/components/forms';
 import { DailyMilkReport, MonthlyMilkReport } from '@/components/reports';
+import { DataImport } from '@/components/DataImport';
 import { UserManagement } from '@/components/UserManagement';
 import { AssetInventory } from '@/components/AssetInventory';
 import { FeedInventory } from '@/components/FeedInventory';
 import { InventoryDashboard } from '@/components/InventoryDashboard';
 import { LandManagement } from '@/components/LandManagement';
-import { ProductionTrends, HerdPerformance } from '@/components/analytics';
+import { ProductionTrends, HerdPerformance, ReproductiveTracking } from '@/components/analytics';
 import { todayStr } from '@/lib/utils';
 import { BREEDS, STATUSES, SESSIONS, ETYPES, Cow, MilkingRecord, FarmEvent, MilkCollection } from '@/types';
 import { statusStyle, sessionStyle, eventIcon } from '@/styles/theme';
@@ -127,7 +128,7 @@ function InPageContent({ params }: InPageProps) {
   const [collectionRecords, setCollectionRecords] = useState<MilkCollection[]>([]);
   const [collectionLoading, setCollectionLoading] = useState(false);
   const [reportType, setReportType] = useState<'daily' | 'monthly'>('daily');
-  const [analyticsType, setAnalyticsType] = useState<'trends' | 'herd'>('trends');
+  const [analyticsType, setAnalyticsType] = useState<'trends' | 'herd' | 'repro'>('trends');
 
   const { cows, milking, events, addCow, updateCow, deleteCow, addMilking, updateMilking, deleteMilking, addEvent, updateEvent, deleteEvent, refreshData } = useFarm();
 
@@ -435,37 +436,40 @@ function InPageContent({ params }: InPageProps) {
             {activeTab === 'reports' && (
               <div>
                 {/* Report sub-tabs */}
-                <div style={{ marginBottom: 16, display: 'flex', gap: 8 }}>
-                  <button
-                    onClick={() => setReportType('daily')}
-                    style={{
-                      padding: '8px 16px',
-                      borderRadius: 8,
-                      border: 'none',
-                      background: reportType === 'daily' ? '#8b5a2b' : '#f0ead8',
-                      color: reportType === 'daily' ? '#fff' : '#8a7d6b',
-                      fontWeight: 600,
-                      fontSize: 'var(--fs-sm)',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    📋 Harian
-                  </button>
-                  <button
-                    onClick={() => setReportType('monthly')}
-                    style={{
-                      padding: '8px 16px',
-                      borderRadius: 8,
-                      border: 'none',
-                      background: reportType === 'monthly' ? '#8b5a2b' : '#f0ead8',
-                      color: reportType === 'monthly' ? '#fff' : '#8a7d6b',
-                      fontWeight: 600,
-                      fontSize: 'var(--fs-sm)',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    📊 Bulanan
-                  </button>
+                <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <button
+                      onClick={() => setReportType('daily')}
+                      style={{
+                        padding: '8px 16px',
+                        borderRadius: 8,
+                        border: 'none',
+                        background: reportType === 'daily' ? '#8b5a2b' : '#f0ead8',
+                        color: reportType === 'daily' ? '#fff' : '#8a7d6b',
+                        fontWeight: 600,
+                        fontSize: 'var(--fs-sm)',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      📋 Harian
+                    </button>
+                    <button
+                      onClick={() => setReportType('monthly')}
+                      style={{
+                        padding: '8px 16px',
+                        borderRadius: 8,
+                        border: 'none',
+                        background: reportType === 'monthly' ? '#8b5a2b' : '#f0ead8',
+                        color: reportType === 'monthly' ? '#fff' : '#8a7d6b',
+                        fontWeight: 600,
+                        fontSize: 'var(--fs-sm)',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      📊 Bulanan
+                    </button>
+                  </div>
+                  <DataImport onComplete={refreshData} />
                 </div>
                 {reportType === 'daily' ? <DailyMilkReport /> : <MonthlyMilkReport />}
               </div>
@@ -568,8 +572,23 @@ function InPageContent({ params }: InPageProps) {
                   >
                     🐄 Performa Ternak
                   </button>
+                  <button
+                    onClick={() => setAnalyticsType('repro')}
+                    style={{
+                      padding: '8px 16px',
+                      borderRadius: 8,
+                      border: 'none',
+                      background: analyticsType === 'repro' ? '#8b5a2b' : '#f0ead8',
+                      color: analyticsType === 'repro' ? '#fff' : '#8a7d6b',
+                      fontWeight: 600,
+                      fontSize: 'var(--fs-sm)',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    🤰 Reproduksi
+                  </button>
                 </div>
-                {analyticsType === 'trends' ? <ProductionTrends /> : <HerdPerformance />}
+                {analyticsType === 'trends' ? <ProductionTrends /> : analyticsType === 'herd' ? <HerdPerformance /> : <ReproductiveTracking />}
               </div>
             )}
           </div>
