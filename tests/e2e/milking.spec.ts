@@ -1,7 +1,7 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, Page } from '@playwright/test';
 
 test.describe('Daily Milking Entry (Input Harian)', () => {
-  const login = async (page) => {
+  const login = async (page: Page) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle', { timeout: 10000 });
     

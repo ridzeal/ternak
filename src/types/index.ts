@@ -86,6 +86,98 @@ export interface FarmEvent {
   followUp: string;
 }
 
+export interface Asset {
+  id: string;
+  name: string;
+  category?: string;
+  purchaseDate?: string;
+  quantity: number;
+  unit?: string;
+  notes?: string;
+  status?: 'Active' | 'Maintenance' | 'Retired' | 'Lost';
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface FeedInventory {
+  id: string;
+  name: string;
+  purchaseDate?: string;
+  quantity?: number;
+  weightKg?: number;
+  unit?: string;
+  unitPrice?: number;
+  totalPrice?: number;
+  expiryDate?: string;
+  supplier?: string;
+  notes?: string;
+  currentStock?: number;
+  minStock?: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface InventoryUsage {
+  id: string;
+  itemId: string;
+  itemType: 'feed' | 'asset';
+  date: string;
+  quantity: number;
+  weightKg?: number;
+  purpose?: string;
+  notes?: string;
+  recordedBy?: string;
+}
+
+export interface AssetMaintenance {
+  id: string;
+  assetId: string;
+  date: string;
+  type: 'Routine' | 'Repair' | 'Inspection' | 'Replacement';
+  description: string;
+  cost?: number;
+  vendor?: string;
+  nextMaintenance?: string;
+  notes?: string;
+}
+
+export interface LandPlot {
+  id: string;
+  plotName: string;
+  location?: string;
+  area?: number;
+  areaUnit?: string;
+  cropType?: 'Pakchong' | 'Red Napier' | 'Telang' | 'Millet' | 'Mombassa' | 'Other';
+  cropVariety?: string;
+  plantingDate?: string;
+  currentCutCycle?: number;
+  lastCutDate?: string;
+  nextCutDate?: string;
+  status?: 'Growing' | 'Ready' | 'Harvested' | 'Fallow' | 'Other';
+  assignedTo?: string;
+  barnLocation?: string;
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ForageHarvest {
+  id: string;
+  plotId: string;
+  plotName: string;
+  harvestDate: string;
+  cutNumber: number;
+  quantity?: number;
+  quantityUnit?: string;
+  quality?: 'Excellent' | 'Good' | 'Average' | 'Poor';
+  height?: number;
+  heightUnit?: string;
+  usedFor?: string;
+  storageLocation?: string;
+  notes?: string;
+  createdAt: string;
+}
+
 export interface FarmState {
   cows: Cow[];
   milking: MilkingRecord[];
@@ -118,3 +210,10 @@ export const BREEDS = ['Friesian Holstein', 'Limousin', 'Simmental', 'Brahman', 
 export const STATUSES = ['Laktasi', 'Kering', 'Hamil', 'Aktif', 'Karantina', 'Terjual'] as const;
 export const SESSIONS = ['Pagi', 'Siang', 'Malam'] as const;
 export const ETYPES = ['Pemeriksaan Kesehatan', 'Pengawinan', 'Penimbangan', 'Vaksinasi', 'Pengobatan', 'Melahirkan', 'Pemberian Cacing', 'Pemotongan Kuku'] as const;
+export const ASSET_CATEGORIES = ['Machinery', 'Vehicle', 'Equipment', 'Building', 'Tool'] as const;
+export const ASSET_STATUSES = ['Active', 'Maintenance', 'Retired', 'Lost'] as const;
+export const FEED_UNITS = ['Kg', 'Ton', 'Bag', 'Sack'] as const;
+export const MAINTENANCE_TYPES = ['Routine', 'Repair', 'Inspection', 'Replacement'] as const;
+export const CROP_TYPES = ['Pakchong', 'Red Napier', 'Telang', 'Millet', 'Mombassa', 'Other'] as const;
+export const PLOT_STATUSES = ['Growing', 'Ready', 'Harvested', 'Fallow', 'Other'] as const;
+export const HARVEST_QUALITY = ['Excellent', 'Good', 'Average', 'Poor'] as const;

@@ -64,6 +64,20 @@
       "when": 1774717169674,
       "tag": "0008_curious_famine",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1775666295629,
+      "tag": "0009_huge_peter_parker",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1775757666058,
+      "tag": "0010_real_songbird",
+      "breakpoints": true
     }
   ]
 }

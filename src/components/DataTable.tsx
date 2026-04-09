@@ -9,7 +9,7 @@ export type Column<T = any> = {
   header: string;
   key: string;
   width?: string;
-  render?: (item: T) => React.ReactNode;
+  render?: (item: T, index: number) => React.ReactNode;
   mobile?: {
     label: string;
     render?: (item: T) => React.ReactNode;
@@ -134,7 +134,7 @@ export function DataTable<T extends { id: string }>({
                 )}
                 {columns.map((col) => (
                   <div key={col.key}>
-                    {col.render ? col.render(item) : renderCellValue(item, (item as any)[col.key])}
+                    {col.render ? col.render(item, i) : renderCellValue(item, (item as any)[col.key])}
                   </div>
                 ))}
               </div>

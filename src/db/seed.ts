@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
+import * as schema from './schema';
 import {
   users,
   sessions,
@@ -21,7 +22,7 @@ async function seed() {
     connectionString: process.env.POSTGRES_URL!,
   });
 
-  const db = drizzle(pool);
+  const db = drizzle(pool, { schema });
 
   const today = new Date();
   const formatDate = (date: Date) => date.toISOString().split('T')[0];

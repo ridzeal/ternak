@@ -1,13 +1,13 @@
-import { test as base, expect } from '@playwright/test';
+import { test as base, expect, Page } from '@playwright/test';
 
 /**
  * Test fixtures for Ternak application with authentication
  */
 
 export const test = base.extend<{
-  authenticatedPage: any;
+  authenticatedPage: Page;
 }>({
-  authenticatedPage: async ({ page }, use) => {
+  authenticatedPage: async ({ page }: { page: Page }, use: (r: Page) => Promise<void>) => {
     // Login before each test
     await page.goto('/login');
     

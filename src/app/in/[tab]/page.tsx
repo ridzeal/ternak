@@ -11,8 +11,13 @@ import { Modal, FormSidebar } from '@/components';
 import { Toast } from '@/components/Toast';
 import { Button } from '@/components/Button';
 import { AddCowForm, AddMilkingForm, AddEventForm, DailyMilkingForm, MilkCollectionForm } from '@/components/forms';
-import { DailyMilkReport } from '@/components/reports/DailyMilkReport';
+import { DailyMilkReport, MonthlyMilkReport } from '@/components/reports';
 import { UserManagement } from '@/components/UserManagement';
+import { AssetInventory } from '@/components/AssetInventory';
+import { FeedInventory } from '@/components/FeedInventory';
+import { InventoryDashboard } from '@/components/InventoryDashboard';
+import { LandManagement } from '@/components/LandManagement';
+import { ProductionTrends, HerdPerformance } from '@/components/analytics';
 import { todayStr } from '@/lib/utils';
 import { BREEDS, STATUSES, SESSIONS, ETYPES, Cow, MilkingRecord, FarmEvent, MilkCollection } from '@/types';
 import { statusStyle, sessionStyle, eventIcon } from '@/styles/theme';
@@ -60,6 +65,11 @@ const TABS = [
   { key: 'reports', label: 'Laporan', icon: '📊', count: 0 },
   { key: 'collection', label: 'Penjualan', icon: '🚛', count: 0 },
   { key: 'events', label: 'Kegiatan', icon: '📋', count: 0 },
+  { key: 'inventory', label: 'Inventaris', icon: '📦', count: 0 },
+  { key: 'assets', label: 'Aset', icon: '🔧', count: 0 },
+  { key: 'feed', label: 'Pakan', icon: '🌾', count: 0 },
+  { key: 'land', label: 'Lahan', icon: '🌱', count: 0 },
+  { key: 'analytics', label: 'Analitik', icon: '📈', count: 0 },
 ];
 
 interface InPageProps {
@@ -116,6 +126,8 @@ function InPageContent({ params }: InPageProps) {
   const [pendingDeleteFromSidebar, setPendingDeleteFromSidebar] = useState<Cow | null>(null);
   const [collectionRecords, setCollectionRecords] = useState<MilkCollection[]>([]);
   const [collectionLoading, setCollectionLoading] = useState(false);
+  const [reportType, setReportType] = useState<'daily' | 'monthly'>('daily');
+  const [analyticsType, setAnalyticsType] = useState<'trends' | 'herd'>('trends');
 
   const { cows, milking, events, addCow, updateCow, deleteCow, addMilking, updateMilking, deleteMilking, addEvent, updateEvent, deleteEvent, refreshData } = useFarm();
 
@@ -421,7 +433,42 @@ function InPageContent({ params }: InPageProps) {
               <DailyMilkingForm onSaveComplete={() => flash('Data harian berhasil disimpan ✓')} onRefresh={refreshData} />
             )}
             {activeTab === 'reports' && (
-              <DailyMilkReport />
+              <div>
+                {/* Report sub-tabs */}
+                <div style={{ marginBottom: 16, display: 'flex', gap: 8 }}>
+                  <button
+                    onClick={() => setReportType('daily')}
+                    style={{
+                      padding: '8px 16px',
+                      borderRadius: 8,
+                      border: 'none',
+                      background: reportType === 'daily' ? '#8b5a2b' : '#f0ead8',
+                      color: reportType === 'daily' ? '#fff' : '#8a7d6b',
+                      fontWeight: 600,
+                      fontSize: 'var(--fs-sm)',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    📋 Harian
+                  </button>
+                  <button
+                    onClick={() => setReportType('monthly')}
+                    style={{
+                      padding: '8px 16px',
+                      borderRadius: 8,
+                      border: 'none',
+                      background: reportType === 'monthly' ? '#8b5a2b' : '#f0ead8',
+                      color: reportType === 'monthly' ? '#fff' : '#8a7d6b',
+                      fontWeight: 600,
+                      fontSize: 'var(--fs-sm)',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    📊 Bulanan
+                  </button>
+                </div>
+                {reportType === 'daily' ? <DailyMilkReport /> : <MonthlyMilkReport />}
+              </div>
             )}
 
             {activeTab === 'collection' && (
@@ -466,6 +513,64 @@ function InPageContent({ params }: InPageProps) {
                 onRowClick={onRowClick}
                 onDelete={handleDeleteEvent}
               />
+            )}
+
+            {activeTab === 'inventory' && (
+              <InventoryDashboard
+                onAddAsset={() => router.push('/in/assets?showDetail=true&mode=new')}
+                onAddFeed={() => router.push('/in/feed?showDetail=true&mode=new')}
+              />
+            )}
+
+            {activeTab === 'assets' && (
+              <AssetInventory />
+            )}
+
+            {activeTab === 'feed' && (
+              <FeedInventory />
+            )}
+
+            {activeTab === 'land' && (
+              <LandManagement />
+            )}
+
+            {activeTab === 'analytics' && (
+              <div>
+                {/* Analytics sub-tabs */}
+                <div style={{ marginBottom: 16, display: 'flex', gap: 8 }}>
+                  <button
+                    onClick={() => setAnalyticsType('trends')}
+                    style={{
+                      padding: '8px 16px',
+                      borderRadius: 8,
+                      border: 'none',
+                      background: analyticsType === 'trends' ? '#8b5a2b' : '#f0ead8',
+                      color: analyticsType === 'trends' ? '#fff' : '#8a7d6b',
+                      fontWeight: 600,
+                      fontSize: 'var(--fs-sm)',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    📈 Tren Produksi
+                  </button>
+                  <button
+                    onClick={() => setAnalyticsType('herd')}
+                    style={{
+                      padding: '8px 16px',
+                      borderRadius: 8,
+                      border: 'none',
+                      background: analyticsType === 'herd' ? '#8b5a2b' : '#f0ead8',
+                      color: analyticsType === 'herd' ? '#fff' : '#8a7d6b',
+                      fontWeight: 600,
+                      fontSize: 'var(--fs-sm)',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    🐄 Performa Ternak
+                  </button>
+                </div>
+                {analyticsType === 'trends' ? <ProductionTrends /> : <HerdPerformance />}
+              </div>
             )}
           </div>
         </main>

@@ -1,6 +1,6 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, Page } from '@playwright/test';
 
-const login = async (page) => {
+const login = async (page: Page) => {
   await page.goto('/');
   await page.waitForLoadState('networkidle', { timeout: 10000 });
 
@@ -36,7 +36,7 @@ test.describe('Milk Quality Alerts (Task 1.5)', () => {
     if (await cowSelect.isVisible().catch(() => false)) {
       const options = await cowSelect.locator('option').count();
       if (options > 1) {
-        await cowSelect.selectIndex(1);
+        await cowSelect.selectOption({ index: 0 });
       }
     }
 
@@ -88,7 +88,7 @@ test.describe('Milk Quality Alerts (Task 1.5)', () => {
     if (await cowSelect.isVisible().catch(() => false)) {
       const options = await cowSelect.locator('option').count();
       if (options > 1) {
-        await cowSelect.selectIndex(1);
+        await cowSelect.selectOption({ index: 0 });
       }
     }
 
@@ -134,7 +134,7 @@ test.describe('Milk Quality Alerts (Task 1.5)', () => {
     if (await cowSelect.isVisible().catch(() => false)) {
       const options = await cowSelect.locator('option').count();
       if (options > 1) {
-        await cowSelect.selectIndex(1);
+        await cowSelect.selectOption({ index: 0 });
       }
     }
 
