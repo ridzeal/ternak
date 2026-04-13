@@ -10,7 +10,7 @@ import { DataTable } from '@/components/DataTable';
 import { Modal, FormSidebar } from '@/components';
 import { Toast } from '@/components/Toast';
 import { Button } from '@/components/Button';
-import { AddCowForm, AddMilkingForm, AddEventForm, DailyMilkingForm, MilkCollectionForm } from '@/components/forms';
+import { AddCowForm, AddMilkingForm, AddEventForm, DailyMilkingForm, MilkCollectionForm, AssetForm, FeedForm, PlotForm, HarvestForm } from '@/components/forms';
 import { DailyMilkReport, MonthlyMilkReport } from '@/components/reports';
 import { DataImport } from '@/components/DataImport';
 import { UserManagement } from '@/components/UserManagement';
@@ -57,6 +57,62 @@ interface EventFormData {
   description: string;
   vet: string;
   followUp: string;
+}
+
+interface AssetFormData {
+  name: string;
+  category: string;
+  purchaseDate: string;
+  quantity: string;
+  unit: string;
+  notes: string;
+  status: string;
+}
+
+interface FeedFormData {
+  name: string;
+  purchaseDate: string;
+  quantity: string;
+  weightKg: string;
+  unit: string;
+  unitPrice: string;
+  totalPrice: string;
+  expiryDate: string;
+  supplier: string;
+  notes: string;
+  minStock: string;
+}
+
+interface PlotFormData {
+  plotName: string;
+  location: string;
+  area: string;
+  areaUnit: string;
+  cropType: string;
+  cropVariety: string;
+  plantingDate: string;
+  currentCutCycle: string;
+  lastCutDate: string;
+  nextCutDate: string;
+  status: string;
+  assignedTo: string;
+  barnLocation: string;
+  notes: string;
+}
+
+interface HarvestFormData {
+  plotId: string;
+  plotName: string;
+  harvestDate: string;
+  cutNumber: string;
+  quantity: string;
+  quantityUnit: string;
+  quality: string;
+  height: string;
+  heightUnit: string;
+  usedFor: string;
+  storageLocation: string;
+  notes: string;
 }
 
 const TABS = [
@@ -122,6 +178,9 @@ function InPageContent({ params }: InPageProps) {
   const [editingMilking, setEditingMilking] = useState<MilkingRecord | null>(null);
   const [editingEvent, setEditingEvent] = useState<FarmEvent | null>(null);
   const [editingCollection, setEditingCollection] = useState<MilkCollection | null>(null);
+  const [editingAsset, setEditingAsset] = useState<any | null>(null);
+  const [editingFeed, setEditingFeed] = useState<any | null>(null);
+  const [editingPlot, setEditingPlot] = useState<any | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<{ type: string; id: string; name: string } | null>(null);
   const [showUserManagement, setShowUserManagement] = useState(false);
   const [pendingDeleteFromSidebar, setPendingDeleteFromSidebar] = useState<Cow | null>(null);
@@ -197,6 +256,22 @@ function InPageContent({ params }: InPageProps) {
 
   const [eventForm, setEventForm] = useState<EventFormData>({
     cowId: '', date: todayStr(), type: ETYPES[0], description: '', vet: '', followUp: '',
+  });
+
+  const [assetForm, setAssetForm] = useState<AssetFormData>({
+    name: '', category: '', purchaseDate: '', quantity: '', unit: '', notes: '', status: 'Active',
+  });
+
+  const [feedForm, setFeedForm] = useState<FeedFormData>({
+    name: '', purchaseDate: '', quantity: '', weightKg: '', unit: '', unitPrice: '', totalPrice: '', expiryDate: '', supplier: '', notes: '', minStock: '',
+  });
+
+  const [plotForm, setPlotForm] = useState<PlotFormData>({
+    plotName: '', location: '', area: '', areaUnit: 'ha', cropType: '', cropVariety: '', plantingDate: '', currentCutCycle: '', lastCutDate: '', nextCutDate: '', status: 'Growing', assignedTo: '', barnLocation: '', notes: '',
+  });
+
+  const [harvestForm, setHarvestForm] = useState<HarvestFormData>({
+    plotId: '', plotName: '', harvestDate: new Date().toISOString().split('T')[0], cutNumber: '1', quantity: '', quantityUnit: 'kg', quality: 'Good', height: '', heightUnit: 'cm', usedFor: '', storageLocation: '', notes: '',
   });
 
   const flash = (message: string) => setToast(message);
@@ -294,8 +369,162 @@ function InPageContent({ params }: InPageProps) {
     // handled by MilkCollectionForm directly
   };
 
+  // --- Asset handlers ---
+  const handleAddAsset = async () => {
+    if (!assetForm.name) {
+      flash('⚠ Nama barang harus diisi');
+      return;
+    }
+    const payload = {
+      id: editingAsset?.id || `asset_${Date.now()}`,
+      ...assetForm,
+      quantity: parseInt(assetForm.quantity) || 0,
+    };
+    try {
+      const url = '/api/assets';
+      const method = editingAsset ? 'PUT' : 'POST';
+      const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      if (!res.ok) throw new Error('Failed to save asset');
+      flash('Asset berhasil disimpan ✓');
+      setEditingAsset(null);
+      closeSidebar();
+      // Refresh data if we're using external data source
+      window.location.reload();
+    } catch (error) {
+      console.error('Error saving asset:', error);
+      flash('❌ Gagal menyimpan asset');
+    }
+  };
+
+  const handleDeleteAssetFromSidebar = async () => {
+    if (editingAsset) {
+      try {
+        const res = await fetch(`/api/assets?id=${editingAsset.id}`, { method: 'DELETE' });
+        if (!res.ok) throw new Error('Failed to delete asset');
+        flash('Asset berhasil dihapus ✓');
+        setEditingAsset(null);
+        closeSidebar();
+        window.location.reload();
+      } catch (error) {
+        console.error('Error deleting asset:', error);
+      }
+    }
+  };
+
+  // --- Feed handlers ---
+  const handleAddFeed = async () => {
+    if (!feedForm.name) {
+      flash('⚠ Nama pakan harus diisi');
+      return;
+    }
+    let calculatedTotal = feedForm.totalPrice;
+    if (feedForm.unitPrice && feedForm.quantity) {
+      calculatedTotal = String(parseFloat(feedForm.unitPrice) * parseFloat(feedForm.quantity));
+    }
+    const payload = {
+      id: editingFeed?.id || `feed_${Date.now()}`,
+      ...feedForm,
+      quantity: feedForm.quantity ? parseInt(feedForm.quantity) : null,
+      weightKg: feedForm.weightKg ? parseFloat(feedForm.weightKg) : null,
+      unitPrice: feedForm.unitPrice ? parseFloat(feedForm.unitPrice) : null,
+      totalPrice: calculatedTotal ? parseFloat(calculatedTotal) : null,
+      minStock: feedForm.minStock ? parseInt(feedForm.minStock) : null,
+    };
+    try {
+      const res = await fetch('/api/feed-inventory', { method: editingFeed ? 'PUT' : 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      if (!res.ok) throw new Error('Failed to save feed');
+      flash('Pakan berhasil disimpan ✓');
+      setEditingFeed(null);
+      closeSidebar();
+      window.location.reload();
+    } catch (error) {
+      console.error('Error saving feed:', error);
+      flash('❌ Gagal menyimpan pakan');
+    }
+  };
+
+  const handleDeleteFeedFromSidebar = async () => {
+    if (editingFeed) {
+      try {
+        const res = await fetch(`/api/feed-inventory?id=${editingFeed.id}`, { method: 'DELETE' });
+        if (!res.ok) throw new Error('Failed to delete feed');
+        flash('Pakan berhasil dihapus ✓');
+        setEditingFeed(null);
+        closeSidebar();
+        window.location.reload();
+      } catch (error) {
+        console.error('Error deleting feed:', error);
+      }
+    }
+  };
+
+  // --- Plot handlers ---
+  const handleAddPlot = async () => {
+    if (!plotForm.plotName) {
+      flash('⚠ Nama plot harus diisi');
+      return;
+    }
+    const payload = {
+      id: editingPlot?.id || `plot_${Date.now()}`,
+      ...plotForm,
+      area: plotForm.area ? parseFloat(plotForm.area) : null,
+      currentCutCycle: plotForm.currentCutCycle ? parseInt(plotForm.currentCutCycle) : null,
+    };
+    try {
+      const res = await fetch('/api/land', { method: editingPlot ? 'PUT' : 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      if (!res.ok) throw new Error('Failed to save plot');
+      flash('Plot lahan berhasil disimpan ✓');
+      setEditingPlot(null);
+      closeSidebar();
+      window.location.reload();
+    } catch (error) {
+      console.error('Error saving plot:', error);
+      flash('❌ Gagal menyimpan plot');
+    }
+  };
+
+  const handleDeletePlotFromSidebar = async () => {
+    if (editingPlot) {
+      try {
+        const res = await fetch(`/api/land?id=${editingPlot.id}`, { method: 'DELETE' });
+        if (!res.ok) throw new Error('Failed to delete plot');
+        flash('Plot berhasil dihapus ✓');
+        setEditingPlot(null);
+        closeSidebar();
+        window.location.reload();
+      } catch (error) {
+        console.error('Error deleting plot:', error);
+      }
+    }
+  };
+
+  // --- Harvest handlers ---
+  const handleAddHarvest = async () => {
+    if (!harvestForm.plotId) {
+      flash('⚠ Pilih plot terlebih dahulu');
+      return;
+    }
+    const payload = {
+      id: `harvest_${Date.now()}`,
+      ...harvestForm,
+      cutNumber: parseInt(harvestForm.cutNumber),
+      quantity: harvestForm.quantity ? parseFloat(harvestForm.quantity) : null,
+      height: harvestForm.height ? parseFloat(harvestForm.height) : null,
+    };
+    try {
+      const res = await fetch('/api/forage-harvests', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      if (!res.ok) throw new Error('Failed to record harvest');
+      flash('Panen berhasil dicatat ✓');
+      closeSidebar();
+      window.location.reload();
+    } catch (error) {
+      console.error('Error recording harvest:', error);
+      flash('❌ Gagal mencatat panen');
+    }
+  };
+
   // --- Generic row click → sidebar ---
-  const onRowClick = (item: Cow | MilkingRecord | FarmEvent | MilkCollection) => {
+  const onRowClick = (item: any) => {
     if ('name' in item && 'breed' in item && 'gender' in item) {
       // Cow
       const cow = item as Cow;
@@ -323,6 +552,27 @@ function InPageContent({ params }: InPageProps) {
       setEditingCollection(col);
       setUrlParamsState({ showDetail: true, mode: 'edit', id: col.id });
       router.push(`/in/${activeTab}?showDetail=true&mode=edit&id=${col.id}`);
+    } else if ('category' in item && 'purchaseDate' in item) {
+      // Asset
+      const asset = item as any;
+      setEditingAsset(asset);
+      setAssetForm({ name: asset.name || '', category: asset.category || '', purchaseDate: asset.purchaseDate || '', quantity: String(asset.quantity || ''), unit: asset.unit || '', notes: asset.notes || '', status: asset.status || 'Active' });
+      setUrlParamsState({ showDetail: true, mode: 'edit', id: asset.id });
+      router.push(`/in/${activeTab}?showDetail=true&mode=edit&id=${asset.id}`);
+    } else if ('weightKg' in item && 'supplier' in item) {
+      // Feed
+      const feed = item as any;
+      setEditingFeed(feed);
+      setFeedForm({ name: feed.name || '', purchaseDate: feed.purchaseDate || '', quantity: String(feed.quantity || ''), weightKg: String(feed.weightKg || ''), unit: feed.unit || '', unitPrice: String(feed.unitPrice || ''), totalPrice: String(feed.totalPrice || ''), expiryDate: feed.expiryDate || '', supplier: feed.supplier || '', notes: feed.notes || '', minStock: String(feed.minStock || '') });
+      setUrlParamsState({ showDetail: true, mode: 'edit', id: feed.id });
+      router.push(`/in/${activeTab}?showDetail=true&mode=edit&id=${feed.id}`);
+    } else if ('plotName' in item && 'area' in item) {
+      // Land Plot
+      const plot = item as any;
+      setEditingPlot(plot);
+      setPlotForm({ plotName: plot.plotName || '', location: plot.location || '', area: String(plot.area || ''), areaUnit: plot.areaUnit || 'ha', cropType: plot.cropType || '', cropVariety: plot.cropVariety || '', plantingDate: plot.plantingDate || '', currentCutCycle: String(plot.currentCutCycle || ''), lastCutDate: plot.lastCutDate || '', nextCutDate: plot.nextCutDate || '', status: plot.status || 'Growing', assignedTo: plot.assignedTo || '', barnLocation: plot.barnLocation || '', notes: plot.notes || '' });
+      setUrlParamsState({ showDetail: true, mode: 'edit', id: plot.id });
+      router.push(`/in/${activeTab}?showDetail=true&mode=edit&id=${plot.id}`);
     }
   };
 
@@ -331,6 +581,9 @@ function InPageContent({ params }: InPageProps) {
     setEditingMilking(null); resetMilkingForm();
     setEditingEvent(null); resetEventForm();
     setEditingCollection(null);
+    setEditingAsset(null); setAssetForm({ name: '', category: '', purchaseDate: '', quantity: '', unit: '', notes: '', status: 'Active' });
+    setEditingFeed(null); setFeedForm({ name: '', purchaseDate: '', quantity: '', weightKg: '', unit: '', unitPrice: '', totalPrice: '', expiryDate: '', supplier: '', notes: '', minStock: '' });
+    setEditingPlot(null); setPlotForm({ plotName: '', location: '', area: '', areaUnit: 'ha', cropType: '', cropVariety: '', plantingDate: '', currentCutCycle: '', lastCutDate: '', nextCutDate: '', status: 'Growing', assignedTo: '', barnLocation: '', notes: '' });
     setUrlParamsState({ showDetail: true, mode: 'new', id: null });
     router.push(`/in/${activeTab}?showDetail=true&mode=new`);
   };
@@ -338,6 +591,7 @@ function InPageContent({ params }: InPageProps) {
   const closeSidebar = () => {
     setUrlParamsState({ showDetail: false, mode: null, id: null });
     setEditingCow(null); setEditingMilking(null); setEditingEvent(null); setEditingCollection(null);
+    setEditingAsset(null); setEditingFeed(null); setEditingPlot(null);
     resetCowForm(); resetMilkingForm(); resetEventForm();
     router.push(`/in/${activeTab}`);
   };
@@ -527,15 +781,32 @@ function InPageContent({ params }: InPageProps) {
             )}
 
             {activeTab === 'assets' && (
-              <AssetInventory />
+              <AssetInventory
+                onAdd={openNew}
+                onRowClick={onRowClick}
+                onDelete={handleDeleteAssetFromSidebar}
+              />
             )}
 
             {activeTab === 'feed' && (
-              <FeedInventory />
+              <FeedInventory
+                onAdd={openNew}
+                onRowClick={onRowClick}
+                onDelete={handleDeleteFeedFromSidebar}
+              />
             )}
 
             {activeTab === 'land' && (
-              <LandManagement />
+              <LandManagement
+                onAdd={openNew}
+                onRowClick={onRowClick}
+                onDelete={handleDeletePlotFromSidebar}
+                onAddHarvest={() => {
+                  setHarvestForm({ plotId: '', plotName: '', harvestDate: new Date().toISOString().split('T')[0], cutNumber: '1', quantity: '', quantityUnit: 'kg', quality: 'Good', height: '', heightUnit: 'cm', usedFor: '', storageLocation: '', notes: '' });
+                  setUrlParamsState({ showDetail: true, mode: 'new', id: null });
+                  router.push(`/in/land?showDetail=true&mode=new&form=harvest`);
+                }}
+              />
             )}
 
             {activeTab === 'analytics' && (
@@ -635,6 +906,72 @@ function InPageContent({ params }: InPageProps) {
             onSubmitComplete={() => { flash(sidebarMode === 'edit' ? 'Data penjualan berhasil diperbarui ✓' : 'Data penjualan berhasil disimpan ✓'); setEditingCollection(null); closeSidebar(); refreshCollection(); }}
             onCancel={closeSidebar}
             initialData={sidebarMode === 'edit' ? editingCollection : null}
+          />
+        </FormSidebar>
+
+        {/* Inline Form Sidebar - Assets */}
+        <FormSidebar
+          isOpen={showDetail && (sidebarMode === 'edit' || sidebarMode === 'new') && activeTab === 'assets'}
+          onToggle={closeSidebar}
+          title="🔧 Rincian Asset"
+          subtitle={sidebarMode === 'edit' ? 'Perbarui informasi asset' : 'Tambahkan asset baru'}
+        >
+          <AssetForm
+            formData={assetForm}
+            onChange={setAssetForm}
+            onSubmit={handleAddAsset}
+            onCancel={closeSidebar}
+            onDelete={editingAsset ? handleDeleteAssetFromSidebar : undefined}
+            initialData={editingAsset}
+          />
+        </FormSidebar>
+
+        {/* Inline Form Sidebar - Feed */}
+        <FormSidebar
+          isOpen={showDetail && (sidebarMode === 'edit' || sidebarMode === 'new') && activeTab === 'feed'}
+          onToggle={closeSidebar}
+          title="🌾 Rincian Pakan"
+          subtitle={sidebarMode === 'edit' ? 'Perbarui informasi pakan' : 'Tambahkan pakan baru'}
+        >
+          <FeedForm
+            formData={feedForm}
+            onChange={setFeedForm}
+            onSubmit={handleAddFeed}
+            onCancel={closeSidebar}
+            onDelete={editingFeed ? handleDeleteFeedFromSidebar : undefined}
+            initialData={editingFeed}
+          />
+        </FormSidebar>
+
+        {/* Inline Form Sidebar - Land Plot */}
+        <FormSidebar
+          isOpen={showDetail && (sidebarMode === 'edit' || sidebarMode === 'new') && activeTab === 'land' && !new URLSearchParams(window.location.search).get('form')}
+          onToggle={closeSidebar}
+          title="🌱 Rincian Plot Lahan"
+          subtitle={sidebarMode === 'edit' ? 'Perbarui informasi plot' : 'Tambahkan plot baru'}
+        >
+          <PlotForm
+            formData={plotForm}
+            onChange={setPlotForm}
+            onSubmit={handleAddPlot}
+            onCancel={closeSidebar}
+            onDelete={editingPlot ? handleDeletePlotFromSidebar : undefined}
+            initialData={editingPlot}
+          />
+        </FormSidebar>
+
+        {/* Inline Form Sidebar - Harvest */}
+        <FormSidebar
+          isOpen={showDetail && (sidebarMode === 'edit' || sidebarMode === 'new') && activeTab === 'land' && new URLSearchParams(window.location.search).get('form') === 'harvest'}
+          onToggle={closeSidebar}
+          title="🌿 Catat Panen Pakan"
+          subtitle="Catat hasil panen pakan ternak"
+        >
+          <HarvestForm
+            formData={harvestForm}
+            onChange={setHarvestForm}
+            onSubmit={handleAddHarvest}
+            onCancel={closeSidebar}
           />
         </FormSidebar>
 

@@ -3,3 +3,7 @@ export { AddMilkingForm } from './AddMilkingForm';
 export { AddEventForm } from './AddEventForm';
 export { DailyMilkingForm } from './DailyMilkingForm';
 export { MilkCollectionForm } from './MilkCollectionForm';
+export { AssetForm } from './AssetForm';
+export { FeedForm } from './FeedForm';
+export { PlotForm } from './PlotForm';
+export { HarvestForm } from './HarvestForm';
