@@ -4,9 +4,11 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useFarm } from '@/context/FarmContext';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { SideNav } from '@/components/SideNav';
 import { StatsSection } from '@/components/StatsSection';
 import { DataTable } from '@/components/DataTable';
+import { MilkingRecords } from '@/components/MilkingRecords';
 import { Modal, FormSidebar } from '@/components';
 import { Toast } from '@/components/Toast';
 import { Button } from '@/components/Button';
@@ -127,6 +129,7 @@ const TABS = [
   { key: 'feed', label: 'Pakan', icon: '🌾', count: 0 },
   { key: 'land', label: 'Lahan', icon: '🌱', count: 0 },
   { key: 'analytics', label: 'Analitik', icon: '📈', count: 0 },
+  { key: 'wiki', label: 'Panduan', icon: '📖', count: 0 },
 ];
 
 interface InPageProps {
@@ -663,24 +666,12 @@ function InPageContent({ params }: InPageProps) {
             )}
 
             {activeTab === 'milking' && (
-              <DataTable
-                title="Rekaman Pemerahan"
-                subtitle="Log produksi per sesi"
-                data={milking}
-                columns={[
-                  { header: 'Tanggal', key: 'date', width: '110px' },
-                  { header: 'Sesi', key: 'session', width: '100px', render: (r: MilkingRecord) => <span className="session-badge" style={sessionStyle[r.session]}>{r.session}</span> },
-                  { header: 'Volume', key: 'volume', width: '90px', render: (r: MilkingRecord) => <span className="table-cell-bold">{r.volume}L</span> },
-                  { header: 'Lemak %', key: 'fat', width: '80px' },
-                  { header: 'Protein %', key: 'protein', width: '90px' },
-                  { header: 'Catatan', key: 'notes', width: '1fr', render: (r: MilkingRecord) => <span className="table-cell" style={{ fontStyle: 'italic' }}>{r.notes || '—'}</span> },
-                ]}
-                rowIcon={() => '🥛'}
-                rowTitle={(r: MilkingRecord) => r.cowName}
-                rowSubtitle={(r: MilkingRecord) => r.cowId}
-                onAdd={openNew}
+              <MilkingRecords
+                milking={milking}
+                cows={cows}
                 onRowClick={onRowClick}
                 onDelete={handleDeleteMilking}
+                onAdd={openNew}
               />
             )}
 
@@ -860,6 +851,501 @@ function InPageContent({ params }: InPageProps) {
                   </button>
                 </div>
                 {analyticsType === 'trends' ? <ProductionTrends /> : analyticsType === 'herd' ? <HerdPerformance /> : <ReproductiveTracking />}
+              </div>
+            )}
+
+            {activeTab === 'wiki' && (
+              <div style={{ padding: '20px', maxWidth: '900px' }}>
+                <div style={{ marginBottom: 32 }}>
+                  <h1 style={{ fontSize: '2rem', fontWeight: 700, color: '#2e2416', marginBottom: 8 }}>
+                    📖 Panduan Penggunaan Ranch OS
+                  </h1>
+                  <p style={{ fontSize: '1rem', color: '#8a7d6b' }}>
+                    Dokumentasi lengkap untuk mengelola peternakan sapi Anda
+                  </p>
+                </div>
+
+                {/* Quick Navigation */}
+                <div style={{
+                  background: '#f5f0e8',
+                  borderRadius: 12,
+                  padding: 20,
+                  marginBottom: 32,
+                  border: '1px solid #e8dcc8'
+                }}>
+                  <h2 style={{ fontSize: '1.2rem', fontWeight: 600, color: '#5a4a3a', marginBottom: 16 }}>
+                    🚀 Panduan Cepat
+                  </h2>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 12 }}>
+                    <a href="#workflow-pemerahan" style={{ color: '#8b5a2b', textDecoration: 'none', fontWeight: 500 }}>
+                      🥛 Workflow Pemerahan
+                    </a>
+                    <a href="#manajemen-ternak" style={{ color: '#8b5a2b', textDecoration: 'none', fontWeight: 500 }}>
+                      🐄 Manajemen Ternak
+                    </a>
+                    <a href="#inventaris" style={{ color: '#8b5a2b', textDecoration: 'none', fontWeight: 500 }}>
+                      📦 Inventaris & Aset
+                    </a>
+                  </div>
+                </div>
+
+                {/* Quick Page Links */}
+                <div style={{
+                  background: '#e8f4fd',
+                  borderRadius: 12,
+                  padding: 20,
+                  marginBottom: 32,
+                  border: '1px solid #b8d4e8'
+                }}>
+                  <h2 style={{ fontSize: '1.2rem', fontWeight: 600, color: '#5a4a3a', marginBottom: 16 }}>
+                    🔗 Akses Cepat Halaman
+                  </h2>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 10 }}>
+                    <Link
+                      href="/in/daily"
+                      style={{
+                        display: 'block',
+                        padding: '12px 16px',
+                        background: '#fff',
+                        borderRadius: 8,
+                        color: '#8b5a2b',
+                        textDecoration: 'none',
+                        fontWeight: 500,
+                        border: '1px solid #d0e8f8',
+                        transition: 'all 0.2s'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = '#f0f8ff';
+                        e.currentTarget.style.borderColor = '#8b5a2b';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = '#fff';
+                        e.currentTarget.style.borderColor = '#d0e8f8';
+                      }}
+                    >
+                      📝 Input Harian
+                    </Link>
+                    <Link
+                      href="/in/milking"
+                      style={{
+                        display: 'block',
+                        padding: '12px 16px',
+                        background: '#fff',
+                        borderRadius: 8,
+                        color: '#8b5a2b',
+                        textDecoration: 'none',
+                        fontWeight: 500,
+                        border: '1px solid #d0e8f8',
+                        transition: 'all 0.2s'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = '#f0f8ff';
+                        e.currentTarget.style.borderColor = '#8b5a2b';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = '#fff';
+                        e.currentTarget.style.borderColor = '#d0e8f8';
+                      }}
+                    >
+                      🥛 Pemerahan
+                    </Link>
+                    <Link
+                      href="/in/herd"
+                      style={{
+                        display: 'block',
+                        padding: '12px 16px',
+                        background: '#fff',
+                        borderRadius: 8,
+                        color: '#8b5a2b',
+                        textDecoration: 'none',
+                        fontWeight: 500,
+                        border: '1px solid #d0e8f8',
+                        transition: 'all 0.2s'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = '#f0f8ff';
+                        e.currentTarget.style.borderColor = '#8b5a2b';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = '#fff';
+                        e.currentTarget.style.borderColor = '#d0e8f8';
+                      }}
+                    >
+                      🐄 Registri Ternak
+                    </Link>
+                    <Link
+                      href="/in/events"
+                      style={{
+                        display: 'block',
+                        padding: '12px 16px',
+                        background: '#fff',
+                        borderRadius: 8,
+                        color: '#8b5a2b',
+                        textDecoration: 'none',
+                        fontWeight: 500,
+                        border: '1px solid #d0e8f8',
+                        transition: 'all 0.2s'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = '#f0f8ff';
+                        e.currentTarget.style.borderColor = '#8b5a2b';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = '#fff';
+                        e.currentTarget.style.borderColor = '#d0e8f8';
+                      }}
+                    >
+                      📋 Kegiatan
+                    </Link>
+                    <Link
+                      href="/in/collection"
+                      style={{
+                        display: 'block',
+                        padding: '12px 16px',
+                        background: '#fff',
+                        borderRadius: 8,
+                        color: '#8b5a2b',
+                        textDecoration: 'none',
+                        fontWeight: 500,
+                        border: '1px solid #d0e8f8',
+                        transition: 'all 0.2s'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = '#f0f8ff';
+                        e.currentTarget.style.borderColor = '#8b5a2b';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = '#fff';
+                        e.currentTarget.style.borderColor = '#d0e8f8';
+                      }}
+                    >
+                      🚛 Penjualan Susu
+                    </Link>
+                    <Link
+                      href="/in/inventory"
+                      style={{
+                        display: 'block',
+                        padding: '12px 16px',
+                        background: '#fff',
+                        borderRadius: 8,
+                        color: '#8b5a2b',
+                        textDecoration: 'none',
+                        fontWeight: 500,
+                        border: '1px solid #d0e8f8',
+                        transition: 'all 0.2s'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = '#f0f8ff';
+                        e.currentTarget.style.borderColor = '#8b5a2b';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = '#fff';
+                        e.currentTarget.style.borderColor = '#d0e8f8';
+                      }}
+                    >
+                      📦 Inventaris
+                    </Link>
+                    <Link
+                      href="/in/assets"
+                      style={{
+                        display: 'block',
+                        padding: '12px 16px',
+                        background: '#fff',
+                        borderRadius: 8,
+                        color: '#8b5a2b',
+                        textDecoration: 'none',
+                        fontWeight: 500,
+                        border: '1px solid #d0e8f8',
+                        transition: 'all 0.2s'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = '#f0f8ff';
+                        e.currentTarget.style.borderColor = '#8b5a2b';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = '#fff';
+                        e.currentTarget.style.borderColor = '#d0e8f8';
+                      }}
+                    >
+                      🔧 Aset
+                    </Link>
+                    <Link
+                      href="/in/feed"
+                      style={{
+                        display: 'block',
+                        padding: '12px 16px',
+                        background: '#fff',
+                        borderRadius: 8,
+                        color: '#8b5a2b',
+                        textDecoration: 'none',
+                        fontWeight: 500,
+                        border: '1px solid #d0e8f8',
+                        transition: 'all 0.2s'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = '#f0f8ff';
+                        e.currentTarget.style.borderColor = '#8b5a2b';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = '#fff';
+                        e.currentTarget.style.borderColor = '#d0e8f8';
+                      }}
+                    >
+                      🌾 Pakan
+                    </Link>
+                    <Link
+                      href="/in/land"
+                      style={{
+                        display: 'block',
+                        padding: '12px 16px',
+                        background: '#fff',
+                        borderRadius: 8,
+                        color: '#8b5a2b',
+                        textDecoration: 'none',
+                        fontWeight: 500,
+                        border: '1px solid #d0e8f8',
+                        transition: 'all 0.2s'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = '#f0f8ff';
+                        e.currentTarget.style.borderColor = '#8b5a2b';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = '#fff';
+                        e.currentTarget.style.borderColor = '#d0e8f8';
+                      }}
+                    >
+                      🌱 Lahan
+                    </Link>
+                    <Link
+                      href="/in/analytics"
+                      style={{
+                        display: 'block',
+                        padding: '12px 16px',
+                        background: '#fff',
+                        borderRadius: 8,
+                        color: '#8b5a2b',
+                        textDecoration: 'none',
+                        fontWeight: 500,
+                        border: '1px solid #d0e8f8',
+                        transition: 'all 0.2s'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = '#f0f8ff';
+                        e.currentTarget.style.borderColor = '#8b5a2b';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = '#fff';
+                        e.currentTarget.style.borderColor = '#d0e8f8';
+                      }}
+                    >
+                      📈 Analitik
+                    </Link>
+                    <Link
+                      href="/in/reports"
+                      style={{
+                        display: 'block',
+                        padding: '12px 16px',
+                        background: '#fff',
+                        borderRadius: 8,
+                        color: '#8b5a2b',
+                        textDecoration: 'none',
+                        fontWeight: 500,
+                        border: '1px solid #d0e8f8',
+                        transition: 'all 0.2s'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = '#f0f8ff';
+                        e.currentTarget.style.borderColor = '#8b5a2b';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = '#fff';
+                        e.currentTarget.style.borderColor = '#d0e8f8';
+                      }}
+                    >
+                      📊 Laporan
+                    </Link>
+                  </div>
+                </div>
+
+                {/* Main Content */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+                  {/* Milking Workflow */}
+                  <section id="workflow-pemerahan">
+                    <h2 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#2e2416', marginBottom: 16 }}>
+                      🥛 Workflow Pemerahan
+                    </h2>
+
+                    <div style={{ background: '#fffef9', borderRadius: 12, padding: 20, border: '1px solid #e8dcc8', marginBottom: 16 }}>
+                      <h3 style={{ fontSize: '1.1rem', fontWeight: 600, color: '#5a4a3a', marginBottom: 12 }}>
+                        📝 Input Harian (Entry Data Harian)
+                      </h3>
+                      <p style={{ color: '#5a4a3a', marginBottom: 12 }}>
+                        <strong>Tujuan:</strong> Mencatat semua data pemerahan untuk hari ini secara efisien
+                      </p>
+                      <div style={{ background: '#f0e6d8', borderRadius: 8, padding: 12, marginBottom: 12 }}>
+                        <p style={{ margin: 0, fontSize: '0.9rem' }}>
+                          <strong>Workflow:</strong>
+                        </p>
+                        <ol style={{ margin: '8px 0 0 20px', paddingLeft: 20 }}>
+                          <li>Buka tab <Link href="/in/daily" style={{ color: '#8b5a2b', fontWeight: 600 }}><strong>"Input Harian"</strong></Link></li>
+                          <li>Pilih tanggal (default: hari ini)</li>
+                          <li>Lihat semua sapi laktasi dalam tabel</li>
+                          <li>Isi volume 3 sesi (Pagi, Siang, Malam) untuk setiap sapi</li>
+                          <li>Isi data lingkungan (suhu, kelembapan, THI)</li>
+                          <li>Klik <strong>"💾 Simpan Semua"</strong></li>
+                        </ol>
+                      </div>
+                      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                        <span style={{
+                          background: '#22c55e20',
+                          color: '#22c55e',
+                          padding: '4px 12px',
+                          borderRadius: '12px',
+                          fontSize: '0.85rem',
+                          fontWeight: 500
+                        }}>
+                          ✅ Copy dari hari sebelumnya
+                        </span>
+                        <span style={{
+                          background: '#22c55e20',
+                          color: '#22c55e',
+                          padding: '4px 12px',
+                          borderRadius: '12px',
+                          fontSize: '0.85rem',
+                          fontWeight: 500
+                        }}>
+                          ✅ Batch entry semua sapi
+                        </span>
+                        <span style={{
+                          background: '#22c55e20',
+                          color: '#22c55e',
+                          padding: '4px 12px',
+                          borderRadius: '12px',
+                          fontSize: '0.85rem',
+                          fontWeight: 500
+                        }}>
+                          ✅ Data lingkungan otomatis
+                        </span>
+                      </div>
+                    </div>
+
+                    <div style={{ background: '#fffef9', borderRadius: 12, padding: 20, border: '1px solid #e8dcc8' }}>
+                      <h3 style={{ fontSize: '1.1rem', fontWeight: 600, color: '#5a4a3a', marginBottom: 12 }}>
+                        🥛 Pemerahan (Histori & Edit)
+                      </h3>
+                      <p style={{ color: '#5a4a3a', marginBottom: 12 }}>
+                        <strong>Tujuan:</strong> Melihat data historis dan mengedit record individual
+                      </p>
+                      <div style={{ background: '#f0e6d8', borderRadius: 8, padding: 12, marginBottom: 12 }}>
+                        <p style={{ margin: 0, fontSize: '0.9rem' }}>
+                          <strong>Struktur Header-Detail:</strong>
+                        </p>
+                        <ul style={{ margin: '8px 0 0 20px', paddingLeft: 20 }}>
+                          <li><strong>Header:</strong> Ringkasan harian (tanggal, total, jumlah sapi, rata-rata)</li>
+                          <li><strong>Detail:</strong> Breakdown per sapi dengan 3 sesi</li>
+                          <li>Klik header untuk expand/collapse detail</li>
+                          <li>Klik nama sapi untuk edit record individual</li>
+                        </ul>
+                      </div>
+                      <p style={{ margin: 0, fontSize: '0.9rem', color: '#8a7d6b', fontStyle: 'italic' }}>
+                        💡 Gunakan untuk mengedit salah input atau melihat tren historis. Buka halaman <Link href="/in/milking" style={{ color: '#8b5a2b', fontWeight: 600 }}>Pemerahan</Link>
+                      </p>
+                    </div>
+                  </section>
+
+                  {/* Herd Management */}
+                  <section id="manajemen-ternak">
+                    <h2 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#2e2416', marginBottom: 16 }}>
+                      🐄 Manajemen Ternak
+                    </h2>
+
+                    <div style={{ background: '#fffef9', borderRadius: 12, padding: 20, border: '1px solid #e8dcc8', marginBottom: 16 }}>
+                      <h3 style={{ fontSize: '1.1rem', fontWeight: 600, color: '#5a4a3a', marginBottom: 12 }}>
+                        Daftar Ternak
+                      </h3>
+                      <div style={{ background: '#f0e6d8', borderRadius: 8, padding: 12 }}>
+                        <p style={{ margin: 0, fontSize: '0.9rem' }}>
+                          <strong>Fitur:</strong> Tambah, edit, hapus data sapi dengan lengkap
+                        </p>
+                        <ul style={{ margin: '8px 0 0 20px', paddingLeft: 20 }}>
+                          <li>Data dasar: nama, breed, gender, tanggal lahir</li>
+                          <li>Ukuran tubuh: berat, panjang, lingkar dada</li>
+                          <li>Status: Laktasi, Dry, Bunting, Sakit, dll</li>
+                          <li>Informasi reproduksi</li>
+                        </ul>
+                      </div>
+                      <p style={{ margin: '12px 0 0 0', fontSize: '0.9rem' }}>
+                        🔗 Buka halaman <Link href="/in/herd" style={{ color: '#8b5a2b', fontWeight: 600 }}>Registri Ternak</Link>
+                      </p>
+                    </div>
+                  </section>
+
+                  {/* Inventory & Assets */}
+                  <section id="inventaris">
+                    <h2 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#2e2416', marginBottom: 16 }}>
+                      📦 Inventaris & Aset
+                    </h2>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 16 }}>
+                      <div style={{ background: '#fffef9', borderRadius: 12, padding: 16, border: '1px solid #e8dcc8' }}>
+                        <h3 style={{ fontSize: '1rem', fontWeight: 600, color: '#5a4a3a', marginBottom: 8 }}>
+                          🔧 Inventaris Aset
+                        </h3>
+                        <p style={{ fontSize: '0.9rem', color: '#5a4a3a', margin: 0 }}>
+                          Track peralatan, kendaraan, dan peralatan peternakan
+                        </p>
+                        <p style={{ margin: '8px 0 0 0', fontSize: '0.85rem' }}>
+                          <Link href="/in/assets" style={{ color: '#8b5a2b', fontWeight: 600 }}>Buka Aset →</Link>
+                        </p>
+                      </div>
+
+                      <div style={{ background: '#fffef9', borderRadius: 12, padding: 16, border: '1px solid #e8dcc8' }}>
+                        <h3 style={{ fontSize: '1rem', fontWeight: 600, color: '#5a4a3a', marginBottom: 8 }}>
+                          🌾 Stok Pakan
+                        </h3>
+                        <p style={{ fontSize: '0.9rem', color: '#5a4a3a', margin: 0 }}>
+                          Monitor stok pakan dengan alert otomatis untuk stok rendah
+                        </p>
+                        <p style={{ margin: '8px 0 0 0', fontSize: '0.85rem' }}>
+                          <Link href="/in/feed" style={{ color: '#8b5a2b', fontWeight: 600 }}>Buka Pakan →</Link>
+                        </p>
+                      </div>
+
+                      <div style={{ background: '#fffef9', borderRadius: 12, padding: 16, border: '1px solid #e8dcc8' }}>
+                        <h3 style={{ fontSize: '1rem', fontWeight: 600, color: '#5a4a3a', marginBottom: 8 }}>
+                          🌱 Manajemen Lahan
+                        </h3>
+                        <p style={{ fontSize: '0.9rem', color: '#5a4a3a', margin: 0 }}>
+                          Kelola plot lahan dan catat panen pakan
+                        </p>
+                        <p style={{ margin: '8px 0 0 0', fontSize: '0.85rem' }}>
+                          <Link href="/in/land" style={{ color: '#8b5a2b', fontWeight: 600 }}>Buka Lahan →</Link>
+                        </p>
+                      </div>
+                    </div>
+                  </section>
+
+                  {/* Tips */}
+                  <section style={{
+                    background: 'linear-gradient(135deg, #8b5a2b 0%, #a0522d 100%)',
+                    borderRadius: 12,
+                    padding: 24,
+                    color: '#fff'
+                  }}>
+                    <h2 style={{ fontSize: '1.3rem', fontWeight: 700, marginBottom: 16 }}>
+                      💡 Tips & Best Practices
+                    </h2>
+                    <ul style={{ margin: 0, paddingLeft: 20 }}>
+                      <li style={{ marginBottom: 8 }}>Gunakan <strong>"Input Harian"</strong> setiap pagi untuk mencatat produksi semalam sebelumnya</li>
+                      <li style={{ marginBottom: 8 }}>Fitur <strong>"Copy dari Hari Sebelumnya"</strong> mempercepat entry dengan auto-fill data</li>
+                      <li style={{ marginBottom: 8 }}>Periksa <strong>THI (Temperature Humidity Index)</strong> untuk monitor stress heat pada sapi</li>
+                      <li style={{ marginBottom: 8 }}>Alert kualitas otomatis muncul jika lemak/protein/laktosa di luar normal</li>
+                      <li style={{ marginBottom: 8 }}>Gunakan <strong>"Analitik"</strong> untuk melihat tren produksi jangka panjang</li>
+                      <li>Stok pakan dengan alert otomatis untuk kehabisan</li>
+                    </ul>
+                  </section>
+                </div>
               </div>
             )}
           </div>
