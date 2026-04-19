@@ -134,12 +134,12 @@ export function DailyMilkReport({ onRefresh }: DailyMilkReportProps) {
     const datesInRange: string[] = [];
     const start = new Date(startDate);
     const end = new Date(endDate);
-    
+
     for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
       datesInRange.push(d.toISOString().split('T')[0]);
     }
 
-    // CSV Header matching Excel "AB Susu Harian" format
+    // CSV Header matching reference format
     let csv = 'Tanggal,No,Nama,Perahan 1 (Pagi),Perahan 2 (Siang),Perahan 3 (Malam),Total,Keterangan\n';
 
     datesInRange.forEach(date => {
@@ -157,8 +157,8 @@ export function DailyMilkReport({ onRefresh }: DailyMilkReportProps) {
         ].join(',');
         csv += row + '\n';
       });
-      
-      // Add daily summary row
+
+      // Add daily summary row (even if no entries)
       const dailyTotal = calculateDailyTotal(date);
       const producingCows = calculateProducingCows(date);
       csv += `${date},,TOTAL HARIAN,,,,${dailyTotal.toFixed(1)},${producingCows} sapi memproduksi\n`;
